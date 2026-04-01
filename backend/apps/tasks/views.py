@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from config.permissions import IsOwnerOrReadOnly
 from .filters import TaskFilter
 from .models import Task
 from .serializers import TaskSerializer, ShareTaskSerializer
@@ -10,7 +11,7 @@ from .serializers import TaskSerializer, ShareTaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
     filterset_class = TaskFilter
     ordering_fields = ['created_at', 'due_date', 'title']
     ordering = ['-created_at']
@@ -24,31 +25,6 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
-    def get_object(self):
-        obj = super().get_object()
-        if obj.owner != self.request.user and self.request.user not in obj.shared_with.all():
-            from rest_framework.exceptions import PermissionDenied
-            raise PermissionDenied('You do not have permission to access this task.')
-        return obj
-
-    def update(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.owner != request.user:
-            return Response(
-                {'detail': 'Only the owner can edit this task.'},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        return super().update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.owner != request.user:
-            return Response(
-                {'detail': 'Only the owner can delete this task.'},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        return super().destroy(request, *args, **kwargs)
 
     @action(detail=True, methods=['post'], url_path='share')
     def share(self, request, pk=None):

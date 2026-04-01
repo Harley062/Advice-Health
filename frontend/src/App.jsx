@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import NotFound from './pages/NotFound'
 
 function PrivateRoute({ children }) {
   const token = localStorage.getItem('access_token')
@@ -46,7 +47,7 @@ export default function App() {
               </PrivateRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

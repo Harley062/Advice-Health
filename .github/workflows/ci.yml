@@ -53,7 +53,7 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_PORT: "5432"
-        run: pytest --tb=short -v
+        run: pytest --tb=short -v --cov=apps --cov-report=term-missing --cov-fail-under=70
 
   frontend-lint:
     name: Frontend Lint (ESLint)

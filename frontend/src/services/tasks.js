@@ -4,6 +4,8 @@ export const getTasks = (filters = {}, page = 1) => {
   const params = { page }
   if (filters.completed !== '') params.completed = filters.completed
   if (filters.category !== '') params.category = filters.category
+  if (filters.search) params.search = filters.search
+  if (filters.ordering) params.ordering = filters.ordering
   return api.get('/tasks/', { params }).then((r) => r.data)
 }
 

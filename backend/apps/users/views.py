@@ -1,16 +1,22 @@
-from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from config.throttling import AuthRateThrottle
 from .serializers import RegisterSerializer, UserSerializer
-
-User = get_user_model()
 
 
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
+    throttle_classes = (AuthRateThrottle,)
+
+
+class ThrottledTokenObtainPairView(TokenObtainPairView):
+    throttle_classes = (AuthRateThrottle,)
+
+
+class ThrottledTokenRefreshView(TokenRefreshView):
+    throttle_classes = (AuthRateThrottle,)
 
 
 class MeView(generics.RetrieveAPIView):

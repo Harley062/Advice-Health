@@ -6,15 +6,26 @@ import { getJoke } from '../services/external'
 import Navbar from '../components/layout/Navbar'
 import TaskCard from '../components/tasks/TaskCard'
 import TaskForm from '../components/tasks/TaskForm'
+import TaskSkeleton from '../components/tasks/TaskSkeleton'
 import CategoryManager from '../components/categories/CategoryManager'
+
+const ORDERING_OPTIONS = [
+  { value: '-created_at', label: 'Newest first' },
+  { value: 'created_at', label: 'Oldest first' },
+  { value: 'due_date', label: 'Due date (asc)' },
+  { value: '-due_date', label: 'Due date (desc)' },
+  { value: 'title', label: 'Title A-Z' },
+  { value: '-title', label: 'Title Z-A' },
+]
 
 export default function Dashboard() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
-  const [filters, setFilters] = useState({ completed: '', category: '' })
+  const [filters, setFilters] = useState({ completed: '', category: '', search: '', ordering: '-created_at' })
   const [showTaskForm, setShowTaskForm] = useState(false)
   const [editingTask, setEditingTask] = useState(null)
   const [showCategoryManager, setShowCategoryManager] = useState(false)
+  const [searchInput, setSearchInput] = useState('')
 
   const tasksQuery = useQuery({
     queryKey: ['tasks', filters, page],
@@ -46,6 +57,11 @@ export default function Dashboard() {
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
     setPage(1)
+  }
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    handleFilterChange('search', searchInput)
   }
 
   const handleEdit = (task) => {
@@ -111,6 +127,33 @@ export default function Dashboard() {
             </div>
 
             <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200">
+              <form onSubmit={handleSearch} className="flex-1 min-w-[200px]">
+                <label className="block text-xs font-medium text-gray-500 mb-1">Search</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder="Search tasks..."
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  >
+                    Go
+                  </button>
+                  {filters.search && (
+                    <button
+                      type="button"
+                      onClick={() => { setSearchInput(''); handleFilterChange('search', '') }}
+                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              </form>
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
                 <select
@@ -136,10 +179,26 @@ export default function Dashboard() {
                   ))}
                 </select>
               </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Sort by</label>
+                <select
+                  value={filters.ordering}
+                  onChange={(e) => handleFilterChange('ordering', e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  {ORDERING_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {tasksQuery.isLoading && (
-              <div className="text-center py-12 text-gray-400">Loading tasks...</div>
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <TaskSkeleton key={i} />
+                ))}
+              </div>
             )}
 
             {tasksQuery.isError && (
@@ -149,8 +208,12 @@ export default function Dashboard() {
             {!tasksQuery.isLoading && tasks.length === 0 && (
               <div className="text-center py-16 text-gray-400">
                 <p className="text-5xl mb-4">📋</p>
-                <p className="text-lg font-medium">No tasks yet</p>
-                <p className="text-sm">Create your first task to get started!</p>
+                <p className="text-lg font-medium">
+                  {filters.search ? 'No tasks match your search' : 'No tasks yet'}
+                </p>
+                <p className="text-sm">
+                  {filters.search ? 'Try a different query' : 'Create your first task to get started!'}
+                </p>
               </div>
             )}
 
