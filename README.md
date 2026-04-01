@@ -1,186 +1,158 @@
-# To-Do List Application
+# Advice Health
 
-Aplicação web full-stack de gerenciamento de tarefas com autenticação JWT, categorias, compartilhamento entre usuários, filtragem, paginação e integração com API externa.
+Aplicação web full-stack para gestão de tarefas com foco em produtividade, colaboração e acompanhamento de progresso.
+
+## ✨ Principais funcionalidades
+
+- Autenticação JWT (registro, login, refresh, perfil do usuário)
+- CRUD de tarefas com:
+  - prioridade e status (`todo`, `in_progress`, `review`, `done`)
+  - data de início e prazo
+  - recorrência
+  - ordenação, busca e filtros
+- Visualização em **lista** e em **board/kanban**
+- Compartilhamento de tarefas por e-mail
+- Subtarefas por tarefa (com toggle de conclusão)
+- Comentários por tarefa
+- Log de atividades
+- Tracking de tempo (incluindo modo Pomodoro)
+- Templates de tarefas
+- Dashboard de insights com gráficos e exportação CSV
+- Calendário de tarefas
+- Gamificação (XP, níveis, streak, badges, metas semanais)
+- Notificações (listar, marcar como lida, marcar todas)
 
 ---
 
-## Stack
+## 🧱 Stack
 
-| Camada | Tecnologia |
-|--------|-----------|
-| Frontend | React 18 + Vite, Tailwind CSS, Axios, React Query, React Router v6 |
-| Backend | Django 4.2 + Django REST Framework, SimpleJWT, django-filter |
-| Banco de dados | PostgreSQL 15 |
-| Containers | Docker + Docker Compose |
-| Testes backend | pytest + factory-boy |
-| Testes frontend | Selenium (E2E) |
-| CI/CD | GitHub Actions |
+| Camada | Tecnologias |
+|---|---|
+| Frontend | React 18, Vite, Tailwind CSS, React Router v6, React Query, Axios, Recharts |
+| Backend | Django 4.2, Django REST Framework, SimpleJWT, django-filter |
+| Banco | PostgreSQL 15 |
+| Containers | Docker, Docker Compose |
+| Testes | pytest, pytest-django, pytest-cov, factory-boy |
+| Qualidade | ESLint |
 
 ---
 
-## Arquitetura
+## 🗂️ Estrutura (resumo)
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   Docker Compose                     │
-│                                                      │
-│  ┌──────────┐    ┌──────────────┐   ┌────────────┐  │
-│  │ Frontend │───▶│   Backend    │──▶│ PostgreSQL │  │
-│  │  React   │    │  Django DRF  │   │  (db:5432) │  │
-│  │  :3000   │    │    :8000     │   │            │  │
-│  └──────────┘    └──────────────┘   └────────────┘  │
-└─────────────────────────────────────────────────────┘
-```
-
-### Estrutura do projeto
-
-```
+```text
 .
-├── Makefile                        # Atalhos de desenvolvimento
-├── docker-compose.yml
-├── .env.example                    # Template de variáveis de ambiente
-├── .gitignore
-├── .github/workflows/ci.yml        # Pipeline CI (pytest + ESLint)
-│
 ├── backend/
-│   ├── Dockerfile
-│   ├── entrypoint.sh               # Aguarda DB, roda migrations, inicia gunicorn
-│   ├── manage.py
-│   ├── pytest.ini
-│   ├── requirements/
-│   │   ├── base.txt                # Dependências de produção
-│   │   └── dev.txt                 # base.txt + pytest, factory-boy
-│   ├── config/
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   ├── pagination.py           # StandardPagination (expõe page_size na resposta)
-│   │   └── wsgi.py
 │   ├── apps/
-│   │   ├── users/                  # Modelo User customizado, auth endpoints
-│   │   ├── tasks/                  # CRUD, filtros, compartilhamento, toggle
-│   │   │   ├── views.py            # TaskViewSet
-│   │   │   ├── external_views.py   # Proxy para API de piadas
-│   │   │   ├── filters.py
-│   │   │   └── serializers.py
-│   │   └── categories/             # CRUD de categorias por usuário
+│   │   ├── users/        # auth, perfil de jogo, badges, metas, notificações
+│   │   ├── tasks/        # tarefas, subtarefas, comentários, atividade, tempo, templates
+│   │   └── categories/   # categorias por usuário
+│   ├── config/           # settings, urls, paginação, permissões, throttling
+│   ├── requirements/
 │   └── tests/
-│       ├── conftest.py             # Fixtures (UserFactory, auth_client)
-│       ├── factories.py            # UserFactory, TaskFactory, CategoryFactory
-│       ├── test_users.py
-│       ├── test_tasks.py
-│       └── test_categories.py
-│
-└── frontend/
-    ├── Dockerfile
-    ├── src/
-    │   ├── services/
-    │   │   ├── api.js              # Axios + interceptor JWT com refresh automático
-    │   │   ├── tasks.js            # getTasks, createTask, updateTask, deleteTask, toggleTask, shareTask
-    │   │   ├── categories.js       # getCategories, createCategory, updateCategory, deleteCategory
-    │   │   └── external.js         # getJoke
-    │   ├── contexts/
-    │   │   └── AuthContext.jsx     # Estado global de autenticação
-    │   ├── pages/
-    │   │   ├── Login.jsx
-    │   │   ├── Register.jsx
-    │   │   └── Dashboard.jsx
-    │   └── components/
-    │       ├── layout/
-    │       │   └── Navbar.jsx
-    │       ├── tasks/
-    │       │   ├── TaskCard.jsx
-    │       │   ├── TaskForm.jsx
-    │       │   └── ShareTaskModal.jsx
-    │       └── categories/
-    │           └── CategoryManager.jsx
-    └── tests/
-        └── selenium_tests.py
+├── frontend/
+│   ├── src/
+│   │   ├── pages/        # Dashboard, Insights, Calendar, Gamification, Login, Register
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   └── services/     # camada HTTP (api, tasks, comments, stats, etc.)
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── Makefile
+└── .env.example
 ```
 
 ---
 
-## Rodando com Docker Compose
+## 🚀 Como rodar com Docker
 
 ### Pré-requisitos
 
-- Docker Desktop instalado e rodando
+- Docker Desktop instalado e em execução
 
-### Passos
+### 1) Clonar o projeto
 
 ```bash
-# 1. Clone o repositório
 git clone <repo-url>
-cd <repo>
+cd Advice-Health
+```
 
-# 2. Copie e ajuste as variáveis de ambiente (opcional para dev local)
+### 2) Variáveis de ambiente
+
+Copie o arquivo de exemplo:
+
+- Linux/macOS:
+
+```bash
 cp .env.example .env
-
-# 3. Suba todos os serviços
-docker compose up --build
 ```
 
-A aplicação estará disponível em:
-- **Frontend**: http://localhost:3000
-- **API**: http://localhost:8000/api
-- **Django Admin**: http://localhost:8000/admin
+- Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+> Para ambiente de desenvolvimento com `docker-compose.yml`, os serviços já têm defaults úteis. Ainda assim, manter `.env` é recomendado.
+
+### 3) Subir os serviços
 
 ```bash
-# Rodar em background
 docker compose up --build -d
-
-# Parar
-docker compose down
-
-# Parar e remover volume do banco
-docker compose down -v
 ```
 
-### Atalhos com Makefile
+Acesse:
+
+- Frontend: `http://localhost:3000`
+- API: `http://localhost:8000/api`
+- Admin Django: `http://localhost:8000/admin`
+
+### Comandos úteis
 
 ```bash
-make up            # Subir serviços
-make up-build      # Subir com rebuild
-make down          # Parar serviços
-make logs          # Acompanhar logs
-make shell-backend # Abrir shell no container do backend
-make shell-db      # Abrir psql no container do banco
-make migrate       # Rodar migrations
-make test-backend  # Rodar pytest
-make lint          # Rodar ESLint
-make help          # Ver todos os comandos
+docker compose down
+docker compose down -v
+docker compose logs -f
 ```
 
 ---
 
-## Rodando os testes
-
-### Backend (pytest)
+## 🛠️ Atalhos via Makefile
 
 ```bash
-# Via Docker Compose (recomendado)
-docker compose exec backend pytest --tb=short -v
+make up
+make up-build
+make down
+make logs
 
-# Ou localmente (requer PostgreSQL rodando)
-cd backend
-pip install -r requirements/dev.txt
-DB_HOST=localhost DB_NAME=todoapp_test DB_USER=postgres DB_PASSWORD=postgres \
-  SECRET_KEY=dev-only pytest --tb=short -v
+make shell-backend
+make shell-db
 
-# Com cobertura
-pytest --tb=short -v --cov=apps --cov-report=term-missing
+make migrate
+make makemigrations
+make createsuperuser
+
+make test-backend
+make test-backend-cov
+
+make install
+make lint
 ```
 
-### Selenium (E2E)
+---
 
-Requer a aplicação rodando (`docker compose up`) e Google Chrome instalado.
+## ✅ Testes e qualidade
+
+### Backend
 
 ```bash
-cd frontend/tests
-pip install selenium webdriver-manager
-python selenium_tests.py
+# no container
+docker compose exec -T backend python -m pytest --tb=short -v
+
+# cobertura
+docker compose exec -T backend python -m pytest --tb=short -v --cov=apps --cov-report=term-missing --cov-fail-under=70
 ```
 
-### Lint do frontend
+### Frontend (lint)
 
 ```bash
 cd frontend
@@ -190,83 +162,127 @@ npm run lint
 
 ---
 
-## Endpoints da API
+## 🔐 Endpoints da API
 
-### Autenticação
+Base URL: `http://localhost:8000/api`
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/api/auth/register/` | Criar conta |
-| POST | `/api/auth/login/` | Login — retorna `access` + `refresh` |
-| POST | `/api/auth/refresh/` | Renovar access token |
-| GET | `/api/auth/me/` | Dados do usuário autenticado |
-
-### Tarefas
+### Auth / Usuário
 
 | Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/tasks/` | Listar tarefas (próprias + compartilhadas) |
-| POST | `/api/tasks/` | Criar tarefa |
-| GET | `/api/tasks/{id}/` | Detalhar tarefa |
-| PATCH | `/api/tasks/{id}/` | Editar tarefa (somente dono) |
-| DELETE | `/api/tasks/{id}/` | Deletar tarefa (somente dono) |
-| POST | `/api/tasks/{id}/share/` | Compartilhar com usuário por e-mail |
-| POST | `/api/tasks/{id}/toggle/` | Alternar status concluído/não concluído |
-
-#### Parâmetros de filtro e busca
-
-| Parâmetro | Exemplo | Descrição |
-|-----------|---------|-----------|
-| `completed` | `true` / `false` | Filtrar por status |
-| `category` | `3` | Filtrar por ID de categoria |
-| `due_date_from` | `2025-01-01` | Tarefas com vencimento a partir de |
-| `due_date_to` | `2025-12-31` | Tarefas com vencimento até |
-| `search` | `reunião` | Busca por título ou descrição |
-| `ordering` | `due_date` / `-created_at` | Ordenação |
-| `page` | `2` | Número da página (10 itens por página) |
+|---|---|---|
+| POST | `/auth/register/` | Criar conta |
+| POST | `/auth/login/` | Login (retorna `access` e `refresh`) |
+| POST | `/auth/refresh/` | Renovar token de acesso |
+| GET | `/auth/me/` | Dados do usuário autenticado |
+| GET | `/auth/game-profile/` | Perfil de gamificação |
+| GET | `/auth/badges/` | Badges conquistadas |
+| GET | `/auth/badges/all/` | Catálogo de badges |
+| GET | `/auth/goals/` | Listar metas semanais |
+| POST | `/auth/goals/` | Criar meta semanal |
+| PATCH | `/auth/goals/{id}/` | Atualizar meta semanal |
+| GET | `/auth/goals/current/` | Meta da semana atual |
+| GET | `/auth/notifications/` | Listar notificações |
+| POST | `/auth/notifications/{id}/read/` | Marcar notificação como lida |
+| POST | `/auth/notifications/read-all/` | Marcar todas como lidas |
+| GET | `/auth/notifications/unread-count/` | Contador de não lidas |
 
 ### Categorias
 
 | Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/categories/` | Listar categorias do usuário |
-| POST | `/api/categories/` | Criar categoria |
-| PATCH | `/api/categories/{id}/` | Editar categoria |
-| DELETE | `/api/categories/{id}/` | Deletar categoria |
+|---|---|---|
+| GET | `/categories/` | Listar categorias do usuário |
+| POST | `/categories/` | Criar categoria |
+| GET | `/categories/{id}/` | Detalhar categoria |
+| PATCH | `/categories/{id}/` | Atualizar categoria |
+| DELETE | `/categories/{id}/` | Remover categoria |
 
-### Externa
+### Tarefas
 
 | Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/external/joke/` | Busca piada aleatória da API externa |
+|---|---|---|
+| GET | `/tasks/` | Listar tarefas (próprias + compartilhadas) |
+| POST | `/tasks/` | Criar tarefa |
+| GET | `/tasks/{id}/` | Detalhar tarefa |
+| PATCH | `/tasks/{id}/` | Atualizar tarefa |
+| DELETE | `/tasks/{id}/` | Remover tarefa |
+| POST | `/tasks/{id}/share/` | Compartilhar tarefa por e-mail |
+| POST | `/tasks/{id}/toggle/` | Alternar concluída/reaberta |
+| PATCH | `/tasks/{id}/move/` | Mover status/posição (board) |
+| POST | `/tasks/{id}/create-from-recurrence/` | Gerar próxima tarefa recorrente |
+| GET | `/tasks/stats/` | KPIs e dados dos gráficos |
+| GET | `/tasks/export/` | Exportar tarefas em CSV |
+
+### Subtarefas
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/tasks/{task_id}/subtasks/` | Listar subtarefas |
+| POST | `/tasks/{task_id}/subtasks/` | Criar subtarefa |
+| PATCH | `/tasks/{task_id}/subtasks/{id}/` | Atualizar subtarefa |
+| DELETE | `/tasks/{task_id}/subtasks/{id}/` | Remover subtarefa |
+| POST | `/tasks/{task_id}/subtasks/{id}/toggle/` | Toggle de conclusão |
+
+### Comentários
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/tasks/{task_id}/comments/` | Listar comentários |
+| POST | `/tasks/{task_id}/comments/` | Criar comentário |
+| DELETE | `/tasks/{task_id}/comments/{id}/` | Excluir comentário |
+
+### Atividade, tempo e templates
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| GET | `/tasks/activity/` | Feed de atividades |
+| GET | `/tasks/time-entries/` | Listar registros de tempo |
+| POST | `/tasks/time-entries/` | Iniciar registro de tempo |
+| GET | `/tasks/time-entries/active/` | Registro ativo |
+| POST | `/tasks/time-entries/{id}/stop/` | Finalizar registro |
+| GET | `/tasks/templates/` | Listar templates |
+| POST | `/tasks/templates/` | Criar template |
+| DELETE | `/tasks/templates/{id}/` | Excluir template |
+| POST | `/tasks/templates/{id}/use/` | Criar tarefa a partir do template |
 
 ---
 
-## Decisões de design
+## 🔎 Filtros importantes em `/tasks/`
 
-### Autenticação JWT
-Access tokens de curta duração (60 min) com refresh tokens de 7 dias. O serviço Axios (`services/api.js`) intercepta respostas 401, renova o token automaticamente e enfileira requisições concorrentes para evitar race conditions. Tokens rotacionados são invalidados via blacklist (`rest_framework_simplejwt.token_blacklist`).
+| Parâmetro | Exemplo | Descrição |
+|---|---|---|
+| `completed` | `true` | Filtrar por concluídas |
+| `status` | `in_progress` | Filtrar por status |
+| `priority` | `urgent` | Filtrar por prioridade |
+| `category` | `3` | Filtrar por categoria |
+| `search` | `reunião` | Busca por título/descrição |
+| `ordering` | `-created_at` | Ordenação |
+| `page` | `2` | Paginação |
 
-### Visibilidade de tarefas
-O usuário vê tarefas que criou **ou** que foram compartilhadas com ele. Apenas o dono pode editar, deletar ou compartilhar; usuários com quem foi compartilhado têm acesso somente leitura.
+---
 
-### Modelo User customizado
-`AbstractUser` com `email` como `USERNAME_FIELD`. Elimina a necessidade de migração posterior para login por email e mantém a compatibilidade com o sistema de autenticação do Django.
+## ⚙️ Variáveis de ambiente
 
-### Paginação com `page_size` na resposta
-`StandardPagination` (em `config/pagination.py`) inclui `page_size` na resposta paginada, permitindo que o frontend calcule o número de páginas sem acoplar a um valor hardcoded.
+Referência em `.env.example`:
 
-### Camada de serviços no frontend
-Chamadas à API estão em `services/` (`tasks.js`, `categories.js`, `external.js`) e não espalhadas nos componentes. Componentes recebem apenas funções de callback, sem conhecer detalhes de HTTP.
+- `SECRET_KEY`
+- `DEBUG`
+- `ALLOWED_HOSTS`
+- `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_PORT`
+- `CORS_ALLOWED_ORIGINS`
+- `VITE_API_URL`
 
-### Separação de responsabilidades no backend
-`TaskViewSet` cuida apenas do CRUD de tarefas. A view `random_joke` vive em `apps/tasks/external_views.py` e é roteada separadamente via `external_urls.py`.
+---
 
-### Ambiente e segurança
-- `SECRET_KEY` sem valor padrão em produção (levanta `RuntimeError` se ausente)
-- `CORS_ALLOW_ALL_ORIGINS` ativo somente quando `DEBUG=True`
-- `ALLOWED_HOSTS` configurável via variável de ambiente
-- Requisitos separados em `requirements/base.txt` (produção) e `requirements/dev.txt` (testes)
+## 🧠 Notas de implementação
 
-### Integração com API externa
-`/api/external/joke/` funciona como proxy para `https://official-joke-api.appspot.com/random_joke`, evitando problemas de CORS no navegador e centralizando o tratamento de erro.
+- Refresh token automático no frontend via interceptor Axios.
+- Controle de visibilidade: tarefas próprias + compartilhadas.
+- Throttling para endpoints de autenticação.
+- Pontuação e badges atualizados por ações de tarefa/tempo.
+- Exportação CSV para facilitar análise externa.
+
+---
+
+## 📄 Licença
+
+Defina aqui o tipo de licença do projeto (MIT, Apache-2.0 etc.).
