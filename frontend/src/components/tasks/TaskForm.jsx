@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import api from '../services/api'
+import { createTask, updateTask } from '../../services/tasks'
 
 export default function TaskForm({ task, categories, onClose, onSuccess }) {
   const isEdit = Boolean(task)
@@ -39,18 +39,14 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
     }
     try {
       if (isEdit) {
-        await api.patch(`/tasks/${task.id}/`, payload)
+        await updateTask(task.id, payload)
       } else {
-        await api.post('/tasks/', payload)
+        await createTask(payload)
       }
       onSuccess()
     } catch (err) {
       const data = err.response?.data
-      if (data && typeof data === 'object') {
-        setErrors(data)
-      } else {
-        setErrors({ non_field_errors: ['Something went wrong.'] })
-      }
+      setErrors(data && typeof data === 'object' ? data : { non_field_errors: ['Something went wrong.'] })
     } finally {
       setLoading(false)
     }
@@ -63,10 +59,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
           <h2 className="text-xl font-semibold text-gray-800">
             {isEdit ? 'Edit Task' : 'New Task'}
           </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>

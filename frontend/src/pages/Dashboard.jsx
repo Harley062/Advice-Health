@@ -1,25 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '../services/api'
-import Navbar from '../components/Navbar'
-import TaskCard from '../components/TaskCard'
-import TaskForm from '../components/TaskForm'
-import CategoryManager from '../components/CategoryManager'
-
-function fetchTasks(filters, page) {
-  const params = { page }
-  if (filters.completed !== '') params.completed = filters.completed
-  if (filters.category !== '') params.category = filters.category
-  return api.get('/tasks/', { params }).then((r) => r.data)
-}
-
-function fetchCategories() {
-  return api.get('/categories/').then((r) => r.data)
-}
-
-function fetchJoke() {
-  return api.get('/external/joke/').then((r) => r.data)
-}
+import { getTasks, deleteTask, toggleTask } from '../services/tasks'
+import { getCategories } from '../services/categories'
+import { getJoke } from '../services/external'
+import Navbar from '../components/layout/Navbar'
+import TaskCard from '../components/tasks/TaskCard'
+import TaskForm from '../components/tasks/TaskForm'
+import CategoryManager from '../components/categories/CategoryManager'
 
 export default function Dashboard() {
   const queryClient = useQueryClient()
@@ -31,28 +18,28 @@ export default function Dashboard() {
 
   const tasksQuery = useQuery({
     queryKey: ['tasks', filters, page],
-    queryFn: () => fetchTasks(filters, page),
+    queryFn: () => getTasks(filters, page),
   })
 
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
-    queryFn: fetchCategories,
+    queryFn: getCategories,
   })
 
   const jokeQuery = useQuery({
     queryKey: ['joke'],
-    queryFn: fetchJoke,
+    queryFn: getJoke,
     staleTime: Infinity,
     retry: false,
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => api.delete(`/tasks/${id}/`),
+    mutationFn: deleteTask,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
   })
 
   const toggleMutation = useMutation({
-    mutationFn: (id) => api.post(`/tasks/${id}/toggle/`),
+    mutationFn: toggleTask,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
   })
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import api from '../services/api'
+import { createCategory, updateCategory, deleteCategory } from '../../services/categories'
 
 const PRESET_COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B',
@@ -21,7 +21,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
     setError('')
     setLoading(true)
     try {
-      await api.post('/categories/', { name: newName.trim(), color: newColor })
+      await createCategory({ name: newName.trim(), color: newColor })
       setNewName('')
       setNewColor('#3B82F6')
       onUpdate()
@@ -35,7 +35,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
 
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/categories/${id}/`)
+      await deleteCategory(id)
       onUpdate()
     } catch {
       // ignore
@@ -50,7 +50,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
 
   const handleUpdate = async (id) => {
     try {
-      await api.patch(`/categories/${id}/`, { name: editName, color: editColor })
+      await updateCategory(id, { name: editName, color: editColor })
       setEditId(null)
       onUpdate()
     } catch {
@@ -125,36 +125,21 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
                     />
                   ))}
                 </div>
-                <button
-                  onClick={() => handleUpdate(cat.id)}
-                  className="text-xs text-green-600 hover:underline"
-                >
+                <button onClick={() => handleUpdate(cat.id)} className="text-xs text-green-600 hover:underline">
                   Save
                 </button>
-                <button
-                  onClick={() => setEditId(null)}
-                  className="text-xs text-gray-400 hover:underline"
-                >
+                <button onClick={() => setEditId(null)} className="text-xs text-gray-400 hover:underline">
                   Cancel
                 </button>
               </>
             ) : (
               <>
-                <span
-                  className="w-3 h-3 rounded-full shrink-0"
-                  style={{ backgroundColor: cat.color }}
-                />
+                <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                 <span className="flex-1 text-sm text-gray-700">{cat.name}</span>
-                <button
-                  onClick={() => startEdit(cat)}
-                  className="text-xs text-gray-400 hover:text-indigo-600"
-                >
+                <button onClick={() => startEdit(cat)} className="text-xs text-gray-400 hover:text-indigo-600">
                   Edit
                 </button>
-                <button
-                  onClick={() => handleDelete(cat.id)}
-                  className="text-xs text-gray-400 hover:text-red-600"
-                >
+                <button onClick={() => handleDelete(cat.id)} className="text-xs text-gray-400 hover:text-red-600">
                   Del
                 </button>
               </>

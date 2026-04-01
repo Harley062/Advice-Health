@@ -1,8 +1,8 @@
 import pytest
-from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
-User = get_user_model()
+from .factories import UserFactory
 
 
 @pytest.fixture
@@ -21,36 +21,27 @@ def user_data():
 
 
 @pytest.fixture
-def user(db, user_data):
-    return User.objects.create_user(
-        username=user_data['username'],
-        email=user_data['email'],
-        password=user_data['password'],
-    )
+def user(db):
+    return UserFactory(username='testuser', email='test@example.com')
 
 
 @pytest.fixture
 def second_user(db):
-    return User.objects.create_user(
-        username='otheruser',
-        email='other@example.com',
-        password='StrongPass123!',
-    )
+    return UserFactory(username='otheruser', email='other@example.com')
 
 
-@pytest.fixture
-def auth_client(api_client, user):
-    from rest_framework_simplejwt.tokens import RefreshToken
-    refresh = RefreshToken.for_user(user)
-    api_client.credentials(HTTP_AUTHORIZATION=f'Bearer {str(refresh.access_token)}')
-    return api_client
-
-
-@pytest.fixture
-def second_auth_client(api_client, second_user):
-    from rest_framework.test import APIClient
-    from rest_framework_simplejwt.tokens import RefreshToken
+def _authenticated_client(user):
     client = APIClient()
-    refresh = RefreshToken.for_user(second_user)
+    refresh = RefreshToken.for_user(user)
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {str(refresh.access_token)}')
     return client
+
+
+@pytest.fixture
+def auth_client(user):
+    return _authenticated_client(user)
+
+
+@pytest.fixture
+def second_auth_client(second_user):
+    return _authenticated_client(second_user)

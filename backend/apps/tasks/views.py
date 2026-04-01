@@ -1,7 +1,6 @@
-import requests
 from django.db.models import Q
 from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .filters import TaskFilter
@@ -38,7 +37,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if obj.owner != request.user:
             return Response(
                 {'detail': 'Only the owner can edit this task.'},
-                status=status.HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN,
             )
         return super().update(request, *args, **kwargs)
 
@@ -47,7 +46,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if obj.owner != request.user:
             return Response(
                 {'detail': 'Only the owner can delete this task.'},
-                status=status.HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN,
             )
         return super().destroy(request, *args, **kwargs)
 
@@ -57,7 +56,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if task.owner != request.user:
             return Response(
                 {'detail': 'Only the owner can share this task.'},
-                status=status.HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN,
             )
         serializer = ShareTaskSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -65,7 +64,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if target_user == request.user:
             return Response(
                 {'detail': 'You cannot share a task with yourself.'},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         task.shared_with.add(target_user)
         return Response(
@@ -78,27 +77,4 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         task.completed = not task.completed
         task.save(update_fields=['completed', 'updated_at'])
-        serializer = self.get_serializer(task)
-        return Response(serializer.data)
-
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def random_joke(request):
-    try:
-        response = requests.get(
-            'https://official-joke-api.appspot.com/random_joke',
-            timeout=5
-        )
-        response.raise_for_status()
-        data = response.json()
-        return Response({
-            'setup': data.get('setup'),
-            'punchline': data.get('punchline'),
-            'type': data.get('type'),
-        })
-    except requests.RequestException as exc:
-        return Response(
-            {'detail': 'Could not fetch joke from external API.', 'error': str(exc)},
-            status=status.HTTP_503_SERVICE_UNAVAILABLE
-        )
+        return Response(self.get_serializer(task).data)

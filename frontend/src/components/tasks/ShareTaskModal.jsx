@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import api from '../services/api'
+import { shareTask } from '../../services/tasks'
 
 export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }) {
   const [email, setEmail] = useState('')
@@ -13,8 +13,8 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
     setSuccess('')
     setLoading(true)
     try {
-      const res = await api.post(`/tasks/${taskId}/share/`, { email })
-      setSuccess(res.data.detail || 'Task shared successfully!')
+      const data = await shareTask(taskId, email)
+      setSuccess(data.detail || 'Task shared successfully!')
       setEmail('')
       setTimeout(() => onSuccess(), 1500)
     } catch (err) {
