@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Insights = lazy(() => import('./pages/Insights'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LoadingFallback() {
@@ -55,6 +56,14 @@ export default function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/insights"
+              element={
+                <PrivateRoute>
+                  <Insights />
                 </PrivateRoute>
               }
             />

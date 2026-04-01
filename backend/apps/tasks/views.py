@@ -1,4 +1,7 @@
-from django.db.models import Q
+from datetime import timedelta
+
+from django.db.models import Q, Count, Case, When, IntegerField
+from django.utils import timezone
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -54,6 +57,75 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.status = 'todo' if task.status == 'done' else 'done'
         task.save(update_fields=['status', 'completed', 'updated_at'])
         return Response(self.get_serializer(task).data)
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        qs = self.get_queryset()
+        today = timezone.now().date()
+
+        # Counts by status
+        by_status = dict(qs.values_list('status').annotate(c=Count('id')).values_list('status', 'c'))
+        for key in ['todo', 'in_progress', 'review', 'done']:
+            by_status.setdefault(key, 0)
+
+        # Counts by priority
+        by_priority = dict(qs.values_list('priority').annotate(c=Count('id')).values_list('priority', 'c'))
+        for key in ['urgent', 'high', 'medium', 'low']:
+            by_priority.setdefault(key, 0)
+
+        # Counts by category
+        by_category = list(
+            qs.filter(category__isnull=False)
+            .values('category__id', 'category__name', 'category__color')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+
+        # Overdue tasks
+        overdue = list(
+            qs.filter(due_date__lt=today, completed=False)
+            .order_by('due_date')
+            .values('id', 'title', 'due_date', 'priority', 'status')[:10]
+        )
+
+        # Upcoming deadlines (next 7 days)
+        upcoming = list(
+            qs.filter(due_date__gte=today, due_date__lte=today + timedelta(days=7), completed=False)
+            .order_by('due_date')
+            .values('id', 'title', 'due_date', 'priority', 'status')[:10]
+        )
+
+        # Weekly trend (last 8 weeks): created vs completed
+        weekly_trend = []
+        for i in range(7, -1, -1):
+            week_start = today - timedelta(days=today.weekday()) - timedelta(weeks=i)
+            week_end = week_start + timedelta(days=6)
+            created = qs.filter(created_at__date__gte=week_start, created_at__date__lte=week_end).count()
+            completed = qs.filter(
+                status='done', updated_at__date__gte=week_start, updated_at__date__lte=week_end
+            ).count()
+            weekly_trend.append({
+                'week': week_start.strftime('%d/%m'),
+                'created': created,
+                'completed': completed,
+            })
+
+        total = qs.count()
+        done = by_status.get('done', 0)
+
+        return Response({
+            'total': total,
+            'completed': done,
+            'active': total - done,
+            'overdue_count': len(overdue),
+            'completion_rate': round((done / total) * 100, 1) if total > 0 else 0,
+            'by_status': by_status,
+            'by_priority': by_priority,
+            'by_category': by_category,
+            'overdue': overdue,
+            'upcoming': upcoming,
+            'weekly_trend': weekly_trend,
+        })
 
     @action(detail=True, methods=['patch'], url_path='move')
     def move(self, request, pk=None):
