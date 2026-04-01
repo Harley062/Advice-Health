@@ -31,6 +31,9 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
+      - name: Normalize GHCR owner
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -48,8 +51,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/advice-health-backend:${{ env.IMAGE_TAG }}
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/advice-health-backend:latest
+            ${{ env.REGISTRY }}/${{ env.OWNER_LC }}/advice-health-backend:${{ env.IMAGE_TAG }}
+            ${{ env.REGISTRY }}/${{ env.OWNER_LC }}/advice-health-backend:latest
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
 
@@ -60,15 +63,15 @@ jobs:
           file: ./frontend/Dockerfile.prod
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/advice-health-frontend:${{ env.IMAGE_TAG }}
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/advice-health-frontend:latest
+            ${{ env.REGISTRY }}/${{ env.OWNER_LC }}/advice-health-frontend:${{ env.IMAGE_TAG }}
+            ${{ env.REGISTRY }}/${{ env.OWNER_LC }}/advice-health-frontend:latest
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
 
       - name: Show pushed image tags
         run: |
-          echo "Backend: $REGISTRY/${{ github.repository_owner }}/advice-health-backend:$IMAGE_TAG"
-          echo "Frontend: $REGISTRY/${{ github.repository_owner }}/advice-health-frontend:$IMAGE_TAG"
+          echo "Backend: $REGISTRY/$OWNER_LC/advice-health-backend:$IMAGE_TAG"
+          echo "Frontend: $REGISTRY/$OWNER_LC/advice-health-frontend:$IMAGE_TAG"
 
       - name: Trigger Render deploy hook (backend)
         env:
