@@ -16,15 +16,25 @@ const STATUS_OPTIONS = [
   { value: 'done', label: 'Concluído' },
 ]
 
+const RECURRENCE_OPTIONS = [
+  { value: 'none', label: 'Nenhuma' },
+  { value: 'daily', label: 'Diária' },
+  { value: 'weekly', label: 'Semanal' },
+  { value: 'monthly', label: 'Mensal' },
+]
+
 export default function TaskForm({ task, categories, onClose, onSuccess }) {
   const isEdit = Boolean(task)
   const [form, setForm] = useState({
     title: '',
     description: '',
+    start_date: '',
     due_date: '',
     category: '',
     priority: 'medium',
     status: 'todo',
+    recurrence: 'none',
+    recurrence_end_date: '',
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -34,10 +44,13 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
       setForm({
         title: task.title || '',
         description: task.description || '',
+        start_date: task.start_date || '',
         due_date: task.due_date || '',
         category: task.category || '',
         priority: task.priority || 'medium',
         status: task.status || 'todo',
+        recurrence: task.recurrence || 'none',
+        recurrence_end_date: task.recurrence_end_date || '',
       })
     }
   }, [task])
@@ -53,10 +66,13 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
     const payload = {
       title: form.title,
       description: form.description,
+      start_date: form.start_date || null,
       due_date: form.due_date || null,
       category: form.category || null,
       priority: form.priority,
       status: form.status,
+      recurrence: form.recurrence,
+      recurrence_end_date: form.recurrence_end_date || null,
     }
     try {
       if (isEdit) {
@@ -165,6 +181,20 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">
+                Data de Início
+              </label>
+              <input
+                id="start-date"
+                name="start_date"
+                type="date"
+                value={form.start_date}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="due-date">
                 Data de Entrega
               </label>
@@ -177,7 +207,9 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
+          </div>
 
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="category-select">
                 Categoria
@@ -195,7 +227,40 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 ))}
               </select>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="recurrence-select">
+                Recorrência
+              </label>
+              <select
+                id="recurrence-select"
+                name="recurrence"
+                value={form.recurrence}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {RECURRENCE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
+
+          {form.recurrence !== 'none' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="recurrence-end">
+                Fim da Recorrência
+              </label>
+              <input
+                id="recurrence-end"
+                name="recurrence_end_date"
+                type="date"
+                value={form.recurrence_end_date}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             <button
@@ -225,10 +290,13 @@ TaskForm.propTypes = {
     id: PropTypes.number,
     title: PropTypes.string,
     description: PropTypes.string,
+    start_date: PropTypes.string,
     due_date: PropTypes.string,
     category: PropTypes.number,
     priority: PropTypes.string,
     status: PropTypes.string,
+    recurrence: PropTypes.string,
+    recurrence_end_date: PropTypes.string,
   }),
   categories: PropTypes.arrayOf(
     PropTypes.shape({ id: PropTypes.number, name: PropTypes.string })

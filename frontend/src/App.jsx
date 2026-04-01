@@ -7,6 +7,10 @@ const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Insights = lazy(() => import('./pages/Insights'))
+const Calendar = lazy(() => import('./pages/Calendar'))
+const Activity = lazy(() => import('./pages/Activity'))
+const Templates = lazy(() => import('./pages/Templates'))
+const Gamification = lazy(() => import('./pages/Gamification'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LoadingFallback() {
@@ -64,6 +68,38 @@ export default function App() {
               element={
                 <PrivateRoute>
                   <Insights />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <PrivateRoute>
+                  <Calendar />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/activity"
+              element={
+                <PrivateRoute>
+                  <Activity />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/templates"
+              element={
+                <PrivateRoute>
+                  <Templates />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/gamification"
+              element={
+                <PrivateRoute>
+                  <Gamification />
                 </PrivateRoute>
               }
             />

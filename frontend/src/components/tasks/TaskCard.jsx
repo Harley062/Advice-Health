@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import ShareTaskModal from './ShareTaskModal'
+import TaskDetail from './TaskDetail'
 
 const PRIORITY_CONFIG = {
   urgent: { label: 'Urgente', color: 'bg-red-100 text-red-700' },
@@ -18,6 +19,7 @@ const STATUS_CONFIG = {
 
 export default function TaskCard({ task, categories, onEdit, onDelete, onToggle, onShare }) {
   const [showShare, setShowShare] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const category = categories.find((c) => c.id === task.category)
@@ -133,12 +135,28 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
                   Prazo: {formatDate(task.due_date)}
                 </span>
               )}
+              {task.subtask_progress && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">
+                  {task.subtask_progress.done}/{task.subtask_progress.total} subtarefas
+                </span>
+              )}
+              {task.recurrence && task.recurrence !== 'none' && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                  Recorrente
+                </span>
+              )}
               {task.shared_with_emails?.length > 0 && (
                 <span className="text-xs text-gray-400">
                   Compartilhada com {task.shared_with_emails.length} {task.shared_with_emails.length > 1 ? 'pessoas' : 'pessoa'}
                 </span>
               )}
             </div>
+            <button
+              onClick={() => setShowDetail(true)}
+              className="mt-2 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+            >
+              Ver detalhes
+            </button>
           </div>
         </div>
       </div>
@@ -152,6 +170,13 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
             setShowShare(false)
             onShare()
           }}
+        />
+      )}
+      {showDetail && (
+        <TaskDetail
+          task={task}
+          categories={categories}
+          onClose={() => setShowDetail(false)}
         />
       )}
     </>
@@ -168,7 +193,12 @@ TaskCard.propTypes = {
     category: PropTypes.number,
     priority: PropTypes.string,
     status: PropTypes.string,
+    recurrence: PropTypes.string,
     shared_with_emails: PropTypes.arrayOf(PropTypes.string),
+    subtask_progress: PropTypes.shape({
+      total: PropTypes.number,
+      done: PropTypes.number,
+    }),
   }).isRequired,
   categories: PropTypes.arrayOf(
     PropTypes.shape({ id: PropTypes.number, name: PropTypes.string, color: PropTypes.string })

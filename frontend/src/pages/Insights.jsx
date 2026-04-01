@@ -4,7 +4,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   AreaChart, Area,
 } from 'recharts'
-import { getStats } from '../services/stats'
+import { getStats, exportCsv } from '../services/stats'
+import { getCurrentGoal } from '../services/goals'
 import Navbar from '../components/layout/Navbar'
 
 const STATUS_CONFIG = {
@@ -118,6 +119,11 @@ export default function Insights() {
     staleTime: 1000 * 60 * 2,
   })
 
+  const { data: weeklyGoal } = useQuery({
+    queryKey: ['weekly-goal'],
+    queryFn: getCurrentGoal,
+  })
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -173,7 +179,18 @@ export default function Insights() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Insights</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Insights</h1>
+          <button
+            onClick={() => exportCsv()}
+            className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Exportar CSV
+          </button>
+        </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -205,6 +222,44 @@ export default function Insights() {
             icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             color={stats.overdue_count > 0 ? 'bg-red-500' : 'bg-gray-400'}
           />
+        </div>
+
+        {/* Weekly Goal + Time Tracking row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          {weeklyGoal && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-700">Meta Semanal</span>
+                <span className="text-sm font-bold text-gray-900">
+                  {weeklyGoal.completed_count}/{weeklyGoal.target_count}
+                </span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                <div
+                  className="h-3 rounded-full transition-all duration-500"
+                  style={{
+                    width: `${Math.min((weeklyGoal.completed_count / weeklyGoal.target_count) * 100, 100)}%`,
+                    background: weeklyGoal.completed_count >= weeklyGoal.target_count
+                      ? 'linear-gradient(90deg, #10B981, #059669)'
+                      : 'linear-gradient(90deg, #6366F1, #8B5CF6)',
+                  }}
+                />
+              </div>
+              {weeklyGoal.completed_count >= weeklyGoal.target_count && (
+                <p className="text-xs text-emerald-600 font-medium mt-2">Meta atingida!</p>
+              )}
+            </div>
+          )}
+          {stats.total_time_seconds > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Tempo Total Rastreado</span>
+                <span className="text-lg font-bold text-gray-900">
+                  {Math.floor(stats.total_time_seconds / 3600)}h {Math.floor((stats.total_time_seconds % 3600) / 60)}min
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Completion Rate Bar */}
