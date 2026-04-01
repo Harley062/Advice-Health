@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getTasks, deleteTask, toggleTask } from '../services/tasks'
 import { getCategories } from '../services/categories'
@@ -35,6 +35,7 @@ export default function Dashboard() {
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
+    staleTime: 1000 * 60 * 30,
   })
 
   const jokeQuery = useQuery({
@@ -54,25 +55,25 @@ export default function Dashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
   })
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
     setPage(1)
-  }
+  }, [])
 
-  const handleSearch = (e) => {
+  const handleSearch = useCallback((e) => {
     e.preventDefault()
     handleFilterChange('search', searchInput)
-  }
+  }, [searchInput, handleFilterChange])
 
-  const handleEdit = (task) => {
+  const handleEdit = useCallback((task) => {
     setEditingTask(task)
     setShowTaskForm(true)
-  }
+  }, [])
 
-  const handleFormClose = () => {
+  const handleFormClose = useCallback(() => {
     setShowTaskForm(false)
     setEditingTask(null)
-  }
+  }, [])
 
   const tasks = tasksQuery.data?.results || []
   const totalCount = tasksQuery.data?.count || 0

@@ -10,3 +10,4 @@ class TaskAdmin(admin.ModelAdmin):
     raw_id_fields = ('owner', 'category')
     filter_horizontal = ('shared_with',)
     ordering = ('-created_at',)
+    list_select_related = ('owner', 'category')

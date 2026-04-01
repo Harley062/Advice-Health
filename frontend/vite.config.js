@@ -7,4 +7,16 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
   },
+  build: {
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'router': ['react-router-dom'],
+          'query': ['@tanstack/react-query'],
+        },
+      },
+    },
+  },
 })
