@@ -11,7 +11,7 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
   const formatDate = (dateStr) => {
     if (!dateStr) return null
     const d = new Date(dateStr + 'T00:00:00')
-    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    return d.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' })
   }
 
   const isPastDue = task.due_date && !task.completed && new Date(task.due_date) < new Date()
@@ -54,20 +54,20 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
                   onClick={() => onEdit(task)}
                   className="text-xs px-2 py-1 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                 >
-                  Edit
+                  Editar
                 </button>
                 <button
                   onClick={() => setShowShare(true)}
                   className="text-xs px-2 py-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
                 >
-                  Share
+                  Compartilhar
                 </button>
                 {!confirmDelete ? (
                   <button
                     onClick={() => setConfirmDelete(true)}
                     className="text-xs px-2 py-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                   >
-                    Delete
+                    Excluir
                   </button>
                 ) : (
                   <div className="flex items-center gap-1">
@@ -75,13 +75,13 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
                       onClick={() => onDelete(task.id)}
                       className="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                     >
-                      Confirm
+                      Confirmar
                     </button>
                     <button
                       onClick={() => setConfirmDelete(false)}
                       className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
                     >
-                      Cancel
+                      Cancelar
                     </button>
                   </div>
                 )}
@@ -107,12 +107,12 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
                     isPastDue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
                   }`}
                 >
-                  Due {formatDate(task.due_date)}
+                  Prazo: {formatDate(task.due_date)}
                 </span>
               )}
               {task.shared_with_emails?.length > 0 && (
                 <span className="text-xs text-gray-400">
-                  Shared with {task.shared_with_emails.length} user{task.shared_with_emails.length > 1 ? 's' : ''}
+                  Compartilhada com {task.shared_with_emails.length} {task.shared_with_emails.length > 1 ? 'pessoas' : 'pessoa'}
                 </span>
               )}
             </div>

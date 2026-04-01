@@ -28,7 +28,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
       onUpdate()
     } catch (err) {
       const data = err.response?.data
-      setError(data?.name?.[0] || data?.detail || 'Failed to create category.')
+      setError(data?.name?.[0] || data?.detail || 'Falha ao criar categoria.')
     } finally {
       setLoading(false)
     }
@@ -39,7 +39,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
       await deleteCategory(id)
       onUpdate()
     } catch {
-      setError('Failed to delete category.')
+      setError('Falha ao excluir categoria.')
     }
   }
 
@@ -55,16 +55,16 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
       setEditId(null)
       onUpdate()
     } catch {
-      setError('Failed to update category.')
+      setError('Falha ao atualizar categoria.')
     }
   }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-gray-800">Categories</h2>
+        <h2 className="font-semibold text-gray-800">Categorias</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">
-          Close
+          Fechar
         </button>
       </div>
 
@@ -74,7 +74,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
           type="text"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder="Category name"
+          placeholder="Nome da categoria"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
         <div className="flex flex-wrap gap-2 mb-2">
@@ -95,13 +95,13 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
           disabled={loading || !newName.trim()}
           className="w-full py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition-colors"
         >
-          Add Category
+          Adicionar Categoria
         </button>
       </form>
 
       <div className="space-y-2">
         {categories.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-4">No categories yet.</p>
+          <p className="text-sm text-gray-400 text-center py-4">Nenhuma categoria ainda.</p>
         )}
         {categories.map((cat) => (
           <div key={cat.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50">
@@ -127,10 +127,10 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
                   ))}
                 </div>
                 <button onClick={() => handleUpdate(cat.id)} className="text-xs text-green-600 hover:underline">
-                  Save
+                  Salvar
                 </button>
                 <button onClick={() => setEditId(null)} className="text-xs text-gray-400 hover:underline">
-                  Cancel
+                  Cancelar
                 </button>
               </>
             ) : (
@@ -138,10 +138,10 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
                 <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                 <span className="flex-1 text-sm text-gray-700">{cat.name}</span>
                 <button onClick={() => startEdit(cat)} className="text-xs text-gray-400 hover:text-indigo-600">
-                  Edit
+                  Editar
                 </button>
                 <button onClick={() => handleDelete(cat.id)} className="text-xs text-gray-400 hover:text-red-600">
-                  Del
+                  Excluir
                 </button>
               </>
             )}

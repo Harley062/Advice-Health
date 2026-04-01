@@ -10,12 +10,12 @@ import TaskSkeleton from '../components/tasks/TaskSkeleton'
 import CategoryManager from '../components/categories/CategoryManager'
 
 const ORDERING_OPTIONS = [
-  { value: '-created_at', label: 'Newest first' },
-  { value: 'created_at', label: 'Oldest first' },
-  { value: 'due_date', label: 'Due date (asc)' },
-  { value: '-due_date', label: 'Due date (desc)' },
-  { value: 'title', label: 'Title A-Z' },
-  { value: '-title', label: 'Title Z-A' },
+  { value: '-created_at', label: 'Mais recentes' },
+  { value: 'created_at', label: 'Mais antigos' },
+  { value: 'due_date', label: 'Prazo (crescente)' },
+  { value: '-due_date', label: 'Prazo (decrescente)' },
+  { value: 'title', label: 'Título A-Z' },
+  { value: '-title', label: 'Título Z-A' },
 ]
 
 export default function Dashboard() {
@@ -109,40 +109,40 @@ export default function Dashboard() {
 
           <main className="flex-1">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <h1 className="text-2xl font-bold text-gray-800">My Tasks</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Minhas Tarefas</h1>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowCategoryManager((v) => !v)}
                   className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Categories
+                  Categorias
                 </button>
                 <button
                   onClick={() => { setEditingTask(null); setShowTaskForm(true) }}
                   className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                   data-testid="new-task-btn"
                 >
-                  + New Task
+                  + Nova Tarefa
                 </button>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200">
               <form onSubmit={handleSearch} className="flex-1 min-w-[200px]">
-                <label className="block text-xs font-medium text-gray-500 mb-1">Search</label>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Search tasks..."
+                    placeholder="Buscar tarefas..."
                     className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                   <button
                     type="submit"
                     className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                   >
-                    Go
+                    Ir
                   </button>
                   {filters.search && (
                     <button
@@ -150,7 +150,7 @@ export default function Dashboard() {
                       onClick={() => { setSearchInput(''); handleFilterChange('search', '') }}
                       className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      Clear
+                      Limpar
                     </button>
                   )}
                 </div>
@@ -162,26 +162,26 @@ export default function Dashboard() {
                   onChange={(e) => handleFilterChange('completed', e.target.value)}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="">All</option>
-                  <option value="false">Active</option>
-                  <option value="true">Completed</option>
+                  <option value="">Todos</option>
+                  <option value="false">Ativas</option>
+                  <option value="true">Concluídas</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Category</label>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
                 <select
                   value={filters.category}
                   onChange={(e) => handleFilterChange('category', e.target.value)}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="">All Categories</option>
+                  <option value="">Todas as Categorias</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Sort by</label>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Ordenar por</label>
                 <select
                   value={filters.ordering}
                   onChange={(e) => handleFilterChange('ordering', e.target.value)}
@@ -203,17 +203,17 @@ export default function Dashboard() {
             )}
 
             {tasksQuery.isError && (
-              <div className="text-center py-12 text-red-500">Failed to load tasks.</div>
+              <div className="text-center py-12 text-red-500">Falha ao carregar tarefas.</div>
             )}
 
             {!tasksQuery.isLoading && tasks.length === 0 && (
               <div className="text-center py-16 text-gray-400">
                 <p className="text-5xl mb-4">📋</p>
                 <p className="text-lg font-medium">
-                  {filters.search ? 'No tasks match your search' : 'No tasks yet'}
+                  {filters.search ? 'Nenhuma tarefa encontrada' : 'Nenhuma tarefa ainda'}
                 </p>
                 <p className="text-sm">
-                  {filters.search ? 'Try a different query' : 'Create your first task to get started!'}
+                  {filters.search ? 'Tente uma busca diferente' : 'Crie sua primeira tarefa para começar!'}
                 </p>
               </div>
             )}
@@ -239,17 +239,17 @@ export default function Dashboard() {
                   disabled={page === 1}
                   className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
                 >
-                  Previous
+                  Anterior
                 </button>
                 <span className="text-sm text-gray-600">
-                  Page {page} of {totalPages}
+                  Página {page} de {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   disabled={page === totalPages}
                   className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
                 >
-                  Next
+                  Próxima
                 </button>
               </div>
             )}

@@ -47,7 +47,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
       onSuccess()
     } catch (err) {
       const data = err.response?.data
-      setErrors(data && typeof data === 'object' ? data : { non_field_errors: ['Something went wrong.'] })
+      setErrors(data && typeof data === 'object' ? data : { non_field_errors: ['Algo deu errado.'] })
     } finally {
       setLoading(false)
     }
@@ -58,7 +58,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-xl font-semibold text-gray-800">
-            {isEdit ? 'Edit Task' : 'New Task'}
+            {isEdit ? 'Editar Tarefa' : 'Nova Tarefa'}
           </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,7 +76,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="task-title">
-              Title <span className="text-red-500">*</span>
+              T&iacute;tulo <span className="text-red-500">*</span>
             </label>
             <input
               id="task-title"
@@ -87,14 +87,14 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               required
               data-testid="task-title-input"
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="What needs to be done?"
+              placeholder="O que precisa ser feito?"
             />
             {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title[0]}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="task-desc">
-              Description
+              Descri&ccedil;&atilde;o
             </label>
             <textarea
               id="task-desc"
@@ -103,14 +103,14 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               onChange={handleChange}
               rows={3}
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-              placeholder="Optional details..."
+              placeholder="Detalhes opcionais..."
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="due-date">
-                Due Date
+                Data de Entrega
               </label>
               <input
                 id="due-date"
@@ -124,7 +124,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="category-select">
-                Category
+                Categoria
               </label>
               <select
                 id="category-select"
@@ -133,7 +133,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">None</option>
+                <option value="">Nenhuma</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
@@ -147,7 +147,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               onClick={onClose}
               className="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              Cancel
+              Cancelar
             </button>
             <button
               type="submit"
@@ -155,7 +155,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               data-testid="task-submit-btn"
               className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg font-medium transition-colors"
             >
-              {loading ? 'Saving...' : isEdit ? 'Update' : 'Create'}
+              {loading ? 'Salvando...' : isEdit ? 'Atualizar' : 'Criar'}
             </button>
           </div>
         </form>

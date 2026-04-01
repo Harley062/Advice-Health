@@ -15,7 +15,7 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
     setLoading(true)
     try {
       const data = await shareTask(taskId, email)
-      setSuccess(data.detail || 'Task shared successfully!')
+      setSuccess(data.detail || 'Tarefa compartilhada com sucesso!')
       setEmail('')
       setTimeout(() => onSuccess(), 1500)
     } catch (err) {
@@ -25,7 +25,7 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
       } else if (data?.detail) {
         setError(data.detail)
       } else {
-        setError('Failed to share task.')
+        setError('Falha ao compartilhar tarefa.')
       }
     } finally {
       setLoading(false)
@@ -36,7 +36,7 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800">Share Task</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Compartilhar Tarefa</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -46,7 +46,7 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
 
         <div className="p-6">
           <p className="text-sm text-gray-500 mb-4">
-            Sharing: <span className="font-medium text-gray-700">{taskTitle}</span>
+            Compartilhando: <span className="font-medium text-gray-700">{taskTitle}</span>
           </p>
 
           {error && (
@@ -63,7 +63,7 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="share-email">
-                User Email
+                E-mail do usu&aacute;rio
               </label>
               <input
                 id="share-email"
@@ -71,7 +71,7 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="colleague@example.com"
+                placeholder="colega@exemplo.com"
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -81,14 +81,14 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
                 onClick={onClose}
                 className="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
                 className="flex-1 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition-colors"
               >
-                {loading ? 'Sharing...' : 'Share'}
+                {loading ? 'Compartilhando...' : 'Compartilhar'}
               </button>
             </div>
           </form>

@@ -25,7 +25,7 @@ export default function Register() {
       if (data && typeof data === 'object') {
         setErrors(data)
       } else {
-        setErrors({ non_field_errors: ['Registration failed. Please try again.'] })
+        setErrors({ non_field_errors: ['Falha no cadastro. Tente novamente.'] })
       }
     } finally {
       setLoading(false)
@@ -40,8 +40,8 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-2">Create Account</h1>
-        <p className="text-center text-gray-500 mb-8">Join to manage your tasks</p>
+        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-2">Criar Conta</h1>
+        <p className="text-center text-gray-500 mb-8">Cadastre-se para gerenciar suas tarefas</p>
 
         {errors.non_field_errors && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
@@ -52,7 +52,7 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="username">
-              Username
+              Nome de usu&aacute;rio
             </label>
             <input
               id="username"
@@ -62,13 +62,13 @@ export default function Register() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="johndoe"
+              placeholder="joaosilva"
             />
             {fieldError('username')}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="reg-email">
-              Email
+              E-mail
             </label>
             <input
               id="reg-email"
@@ -78,13 +78,13 @@ export default function Register() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="you@example.com"
+              placeholder="voce@exemplo.com"
             />
             {fieldError('email')}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="reg-password">
-              Password
+              Senha
             </label>
             <input
               id="reg-password"
@@ -94,13 +94,13 @@ export default function Register() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Min. 8 characters"
+              placeholder="Min. 8 caracteres"
             />
             {fieldError('password')}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password2">
-              Confirm Password
+              Confirmar Senha
             </label>
             <input
               id="password2"
@@ -119,14 +119,14 @@ export default function Register() {
             disabled={loading}
             className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold py-2.5 rounded-lg transition-colors mt-2"
           >
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? 'Criando conta...' : 'Criar Conta'}
           </button>
         </form>
 
         <p className="text-center text-gray-500 mt-6">
-          Already have an account?{' '}
+          J&aacute; tem uma conta?{' '}
           <Link to="/login" className="text-indigo-600 hover:underline font-medium">
-            Sign In
+            Entrar
           </Link>
         </p>
       </div>

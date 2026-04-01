@@ -19,10 +19,10 @@ class CategorySerializer(serializers.ModelSerializer):
             if self.instance:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise serializers.ValidationError('You already have a category with this name.')
+                raise serializers.ValidationError('Você já possui uma categoria com este nome.')
         return value
 
     def validate_color(self, value):
         if not HEX_COLOR_RE.match(value):
-            raise serializers.ValidationError('Color must be a valid hex code (e.g. #FF5733).')
+            raise serializers.ValidationError('A cor deve ser um código hex válido (ex: #FF5733).')
         return value

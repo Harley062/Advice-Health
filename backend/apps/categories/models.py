@@ -8,7 +8,8 @@ class Category(models.Model):
     color = models.CharField(max_length=7, default='#3B82F6')
 
     class Meta:
-        verbose_name_plural = 'categories'
+        verbose_name = 'categoria'
+        verbose_name_plural = 'categorias'
         ordering = ['name']
         unique_together = [['name', 'owner']]
 

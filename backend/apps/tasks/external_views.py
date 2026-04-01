@@ -31,6 +31,6 @@ def random_joke(request):
         return Response(joke)
     except requests.RequestException as exc:
         return Response(
-            {'detail': 'Could not fetch joke from external API.', 'error': str(exc)},
+            {'detail': 'Não foi possível buscar a piada da API externa.', 'error': str(exc)},
             status=status.HTTP_503_SERVICE_UNAVAILABLE,
         )

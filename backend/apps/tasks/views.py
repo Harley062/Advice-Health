@@ -31,7 +31,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         if task.owner != request.user:
             return Response(
-                {'detail': 'Only the owner can share this task.'},
+                {'detail': 'Apenas o proprietário pode compartilhar esta tarefa.'},
                 status=status.HTTP_403_FORBIDDEN,
             )
         serializer = ShareTaskSerializer(data=request.data)
@@ -39,12 +39,12 @@ class TaskViewSet(viewsets.ModelViewSet):
         target_user = serializer.target_user
         if target_user == request.user:
             return Response(
-                {'detail': 'You cannot share a task with yourself.'},
+                {'detail': 'Você não pode compartilhar uma tarefa consigo mesmo.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         task.shared_with.add(target_user)
         return Response(
-            {'detail': f'Task shared with {target_user.email}.'},
+            {'detail': f'Tarefa compartilhada com {target_user.email}.'},
             status=status.HTTP_200_OK,
         )
 

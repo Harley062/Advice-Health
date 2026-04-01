@@ -26,7 +26,7 @@ class TaskSerializer(serializers.ModelSerializer):
         if category is not None:
             request = self.context.get('request')
             if request and category.owner != request.user:
-                raise serializers.ValidationError('Category does not belong to you.')
+                raise serializers.ValidationError('Esta categoria não pertence a você.')
         return category
 
 
@@ -37,7 +37,7 @@ class ShareTaskSerializer(serializers.Serializer):
         try:
             self._target_user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise serializers.ValidationError('No user found with this email.')
+            raise serializers.ValidationError('Nenhum usuário encontrado com este e-mail.')
         return email
 
     @property
