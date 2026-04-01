@@ -258,3 +258,23 @@ class TestTaskMove:
         response = auth_client.patch(url, {'status': 'todo', 'position': 5}, format='json')
         assert response.status_code == 200
         assert response.data['position'] == 5
+
+
+@pytest.mark.django_db
+class TestTaskComments:
+    def test_create_comment_without_task_in_payload(self, auth_client, task):
+        url = reverse('comment-list', kwargs={'task_pk': task.id})
+        response = auth_client.post(url, {'content': 'Primeiro comentário'}, format='json')
+
+        assert response.status_code == 201
+        assert response.data['content'] == 'Primeiro comentário'
+        assert response.data['task'] == task.id
+
+    def test_list_comments_for_task(self, auth_client, task):
+        create_url = reverse('comment-list', kwargs={'task_pk': task.id})
+        auth_client.post(create_url, {'content': 'Comentário de teste'}, format='json')
+
+        list_response = auth_client.get(create_url)
+        assert list_response.status_code == 200
+        assert len(list_response.data) == 1
+        assert list_response.data[0]['content'] == 'Comentário de teste'
