@@ -36,6 +36,12 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/auth/login/')\" 2>/dev/null || exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   frontend:
     build:
@@ -47,7 +53,8 @@ services:
     environment:
       - VITE_API_URL=http://localhost:8000/api
     depends_on:
-      - backend
+      backend:
+        condition: service_started
     volumes:
       - ./frontend:/app
       - /app/node_modules
