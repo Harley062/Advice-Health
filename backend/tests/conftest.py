@@ -10,7 +10,9 @@ def _disable_throttling(settings):
     settings.REST_FRAMEWORK = {
         **settings.REST_FRAMEWORK,
         'DEFAULT_THROTTLE_CLASSES': [],
-        'DEFAULT_THROTTLE_RATES': {},
+        'DEFAULT_THROTTLE_RATES': {
+            'auth': '100000/minute',
+        },
     }
 
 
