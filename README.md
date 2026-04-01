@@ -162,6 +162,37 @@ npm run lint
 
 ---
 
+## 🚢 Deploy (pipeline completo com cache de imagem)
+
+O workflow de deploy (`.github/workflows/deploy.yml`) está configurado para:
+
+1. Rodar apenas quando a CI do `main` finalizar com sucesso
+2. Buildar e publicar imagens Docker no GHCR com tags:
+  - `latest`
+  - `<sha-do-commit>`
+3. Usar cache de camadas Docker (`buildx` + `type=gha`) para acelerar builds subsequentes
+4. Disparar os deploy hooks do Render após o push das imagens
+
+### Secrets necessários no GitHub
+
+Configure em **Settings → Secrets and variables → Actions**:
+
+- `RENDER_DEPLOY_HOOK_BACKEND`
+- `RENDER_DEPLOY_HOOK_FRONTEND`
+
+> O push no GHCR usa `GITHUB_TOKEN` automático do workflow (com permissão `packages: write`).
+
+### Ajuste importante no Render
+
+No `render.yaml`, os serviços estão com `autoDeploy: false` para evitar deploy duplicado.
+
+- O deploy passa a ser acionado pelo workflow (hooks).
+- O frontend foi padronizado para `runtime: docker` com `Dockerfile.prod`.
+
+Se você já tem serviços antigos no Render com runtime diferente, aplique o blueprint atualizado ou ajuste manualmente no painel.
+
+---
+
 ## 🔐 Endpoints da API
 
 Base URL: `http://localhost:8000/api`

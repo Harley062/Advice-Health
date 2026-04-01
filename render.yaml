@@ -11,7 +11,7 @@ services:
     plan: free
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    autoDeploy: true
+    autoDeploy: false
     healthCheckPath: /admin/login/
     envVars:
       - key: SECRET_KEY
@@ -31,12 +31,11 @@ services:
 
   - type: web
     name: advice-health-frontend
-    runtime: node
+    runtime: docker
     plan: free
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview -- --host 0.0.0.0 --port $PORT
-    autoDeploy: true
+    dockerfilePath: ./Dockerfile.prod
+    autoDeploy: false
     envVars:
       - key: VITE_API_URL
         sync: false
