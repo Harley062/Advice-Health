@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getTasks, deleteTask, toggleTask } from '../services/tasks'
 import { getCategories } from '../services/categories'
-import { getJoke } from '../services/external'
 import Navbar from '../components/layout/Navbar'
 import TaskCard from '../components/tasks/TaskCard'
 import TaskForm from '../components/tasks/TaskForm'
@@ -48,13 +47,6 @@ export default function Dashboard() {
     queryKey: ['categories'],
     queryFn: getCategories,
     staleTime: 1000 * 60 * 30,
-  })
-
-  const jokeQuery = useQuery({
-    queryKey: ['joke'],
-    queryFn: getJoke,
-    staleTime: Infinity,
-    retry: false,
   })
 
   const deleteMutation = useMutation({
@@ -104,16 +96,6 @@ export default function Dashboard() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {jokeQuery.data && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-start gap-3">
-            <span className="text-2xl">😄</span>
-            <div>
-              <p className="font-medium text-yellow-800">{jokeQuery.data.setup}</p>
-              <p className="text-yellow-700 mt-1">{jokeQuery.data.punchline}</p>
-            </div>
-          </div>
-        )}
-
         <div className="flex flex-col md:flex-row gap-8">
           {showCategoryManager && (
             <aside className="w-full md:w-64 shrink-0">
