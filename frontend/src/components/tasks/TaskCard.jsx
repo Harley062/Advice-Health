@@ -4,17 +4,17 @@ import ShareTaskModal from './ShareTaskModal'
 import TaskDetail from './TaskDetail'
 
 const PRIORITY_CONFIG = {
-  urgent: { label: 'Urgente', color: 'bg-red-100 text-red-700' },
-  high: { label: 'Alta', color: 'bg-orange-100 text-orange-700' },
-  medium: { label: 'Média', color: 'bg-blue-100 text-blue-700' },
-  low: { label: 'Baixa', color: 'bg-gray-100 text-gray-600' },
+  urgent: { label: 'Urgente', color: 'bg-red-100 text-red-700 border border-red-200' },
+  high: { label: 'Alta', color: 'bg-orange-100 text-orange-700 border border-orange-200' },
+  medium: { label: 'Média', color: 'bg-blue-100 text-blue-700 border border-blue-200' },
+  low: { label: 'Baixa', color: 'bg-slate-100 text-slate-600 border border-slate-200' },
 }
 
 const STATUS_CONFIG = {
-  todo: { label: 'A Fazer', color: 'bg-gray-100 text-gray-700' },
-  in_progress: { label: 'Em Andamento', color: 'bg-blue-100 text-blue-700' },
-  review: { label: 'Em Revisão', color: 'bg-yellow-100 text-yellow-700' },
-  done: { label: 'Concluído', color: 'bg-green-100 text-green-700' },
+  todo: { label: 'A Fazer', color: 'bg-slate-100 text-slate-700 border border-slate-200' },
+  in_progress: { label: 'Em Andamento', color: 'bg-blue-100 text-blue-700 border border-blue-200' },
+  review: { label: 'Em Revisão', color: 'bg-yellow-100 text-yellow-700 border border-yellow-200' },
+  done: { label: 'Concluído', color: 'bg-green-100 text-green-700 border border-green-200' },
 }
 
 export default function TaskCard({ task, categories, onEdit, onDelete, onToggle, onShare }) {
@@ -37,7 +37,7 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
   return (
     <>
       <div
-        className={`bg-white border rounded-xl p-5 shadow-sm transition-all ${
+        className={`bg-white/90 border border-slate-200 rounded-2xl p-5 shadow-[0_8px_22px_rgba(15,23,42,0.06)] hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(79,70,229,0.12)] transition-all ${
           task.completed ? 'opacity-60' : ''
         }`}
         data-testid="task-card"
@@ -49,7 +49,7 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
             className={`mt-0.5 w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors ${
               task.completed
                 ? 'bg-green-500 border-green-500 text-white'
-                : 'border-gray-300 hover:border-indigo-500'
+                : 'border-slate-300 hover:border-indigo-500'
             }`}
           >
             {task.completed && (
@@ -62,7 +62,7 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <h3
-                className={`font-semibold text-gray-800 ${task.completed ? 'line-through text-gray-400' : ''}`}
+                className={`font-semibold text-slate-800 ${task.completed ? 'line-through text-slate-400' : ''}`}
                 data-testid="task-title"
               >
                 {task.title}
@@ -70,20 +70,20 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => onEdit(task)}
-                  className="text-xs px-2 py-1 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                  className="text-xs px-2 py-1 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                 >
                   Editar
                 </button>
                 <button
                   onClick={() => setShowShare(true)}
-                  className="text-xs px-2 py-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                  className="text-xs px-2 py-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   Compartilhar
                 </button>
                 {!confirmDelete ? (
                   <button
                     onClick={() => setConfirmDelete(true)}
-                    className="text-xs px-2 py-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    className="text-xs px-2 py-1 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     Excluir
                   </button>
@@ -91,13 +91,13 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => onDelete(task.id)}
-                      className="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                      className="text-xs px-2 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                     >
                       Confirmar
                     </button>
                     <button
                       onClick={() => setConfirmDelete(false)}
-                      className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
+                      className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
                     >
                       Cancelar
                     </button>
@@ -107,7 +107,7 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
             </div>
 
             {task.description && (
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{task.description}</p>
+              <p className="text-sm text-slate-500 mt-1 line-clamp-2">{task.description}</p>
             )}
 
             <div className="flex flex-wrap items-center gap-2 mt-3">
@@ -146,7 +146,7 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
                 </span>
               )}
               {task.shared_with_emails?.length > 0 && (
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-slate-400">
                   Compartilhada com {task.shared_with_emails.length} {task.shared_with_emails.length > 1 ? 'pessoas' : 'pessoa'}
                 </span>
               )}

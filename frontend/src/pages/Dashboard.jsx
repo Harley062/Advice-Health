@@ -92,7 +92,7 @@ export default function Dashboard() {
   const categories = Array.isArray(categoriesQuery.data) ? categoriesQuery.data : []
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-transparent">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -108,13 +108,16 @@ export default function Dashboard() {
           )}
 
           <main className="flex-1">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <h1 className="text-2xl font-bold text-gray-800">Minhas Tarefas</h1>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 rounded-2xl border border-white/70 bg-white/75 backdrop-blur-sm p-4 shadow-[0_8px_28px_rgba(15,23,42,0.06)]">
+              <div>
+                <h1 className="text-2xl font-bold text-slate-800">Minhas Tarefas</h1>
+                <p className="text-sm text-slate-500">Organize seu dia com foco e clareza ✨</p>
+              </div>
               <div className="flex gap-3">
-                <div className="flex bg-white border border-gray-300 rounded-lg overflow-hidden">
+                <div className="flex bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`px-3 py-2 text-sm transition-colors ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                    className={`px-3 py-2 text-sm transition-colors ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}
                     title="Visualização em lista"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -123,7 +126,7 @@ export default function Dashboard() {
                   </button>
                   <button
                     onClick={() => setViewMode('board')}
-                    className={`px-3 py-2 text-sm transition-colors ${viewMode === 'board' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                    className={`px-3 py-2 text-sm transition-colors ${viewMode === 'board' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}
                     title="Visualização em quadro"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -133,13 +136,13 @@ export default function Dashboard() {
                 </div>
                 <button
                   onClick={() => setShowCategoryManager((v) => !v)}
-                  className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-sm bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
                 >
                   Categorias
                 </button>
                 <button
                   onClick={() => { setEditingTask(null); setShowTaskForm(true) }}
-                  className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl hover:brightness-110 transition-all shadow-md"
                   data-testid="new-task-btn"
                 >
                   + Nova Tarefa
@@ -149,20 +152,20 @@ export default function Dashboard() {
 
             {viewMode === 'list' && (
               <>
-                <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200">
+                <div className="flex flex-wrap gap-4 mb-6 bg-white/85 p-4 rounded-2xl border border-white shadow-[0_8px_22px_rgba(15,23,42,0.05)]">
                   <form onSubmit={handleSearch} className="flex-1 min-w-[200px]">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Buscar</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         placeholder="Buscar tarefas..."
-                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="flex-1 border border-slate-200 bg-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                       <button
                         type="submit"
-                        className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                        className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors"
                       >
                         Ir
                       </button>
@@ -170,7 +173,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => { setSearchInput(''); handleFilterChange('search', '') }}
-                          className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="px-3 py-2 text-sm border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
                         >
                           Limpar
                         </button>
@@ -178,11 +181,11 @@ export default function Dashboard() {
                     </div>
                   </form>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
                     <select
                       value={filters.completed}
                       onChange={(e) => handleFilterChange('completed', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                       <option value="">Todos</option>
                       <option value="false">Ativas</option>
@@ -190,11 +193,11 @@ export default function Dashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Prioridade</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Prioridade</label>
                     <select
                       value={filters.priority}
                       onChange={(e) => handleFilterChange('priority', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                       {PRIORITY_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -202,11 +205,11 @@ export default function Dashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Categoria</label>
                     <select
                       value={filters.category}
                       onChange={(e) => handleFilterChange('category', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                       <option value="">Todas as Categorias</option>
                       {categories.map((cat) => (
@@ -215,11 +218,11 @@ export default function Dashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Ordenar por</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Ordenar por</label>
                     <select
                       value={filters.ordering}
                       onChange={(e) => handleFilterChange('ordering', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                       {ORDERING_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -241,7 +244,7 @@ export default function Dashboard() {
                 )}
 
                 {!tasksQuery.isLoading && tasks.length === 0 && (
-                  <div className="text-center py-16 text-gray-400">
+                  <div className="text-center py-16 text-slate-400">
                     <p className="text-5xl mb-4">📋</p>
                     <p className="text-lg font-medium">
                       {filters.search ? 'Nenhuma tarefa encontrada' : 'Nenhuma tarefa ainda'}
@@ -274,17 +277,17 @@ export default function Dashboard() {
                     <button
                       onClick={() => setPage((p) => p - 1)}
                       disabled={page === 1}
-                      className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 text-sm bg-white border border-slate-200 rounded-xl disabled:opacity-40 hover:bg-slate-50 transition-colors"
                     >
                       Anterior
                     </button>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-slate-600">
                       Página {page} de {totalPages}
                     </span>
                     <button
                       onClick={() => setPage((p) => p + 1)}
                       disabled={page === totalPages}
-                      className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 text-sm bg-white border border-slate-200 rounded-xl disabled:opacity-40 hover:bg-slate-50 transition-colors"
                     >
                       Próxima
                     </button>

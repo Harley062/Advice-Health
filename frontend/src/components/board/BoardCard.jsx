@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types'
 
 const PRIORITY_CONFIG = {
-  urgent: { label: 'Urgente', color: 'bg-red-100 text-red-700', dot: 'bg-red-500' },
-  high: { label: 'Alta', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-500' },
-  medium: { label: 'Média', color: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' },
-  low: { label: 'Baixa', color: 'bg-gray-100 text-gray-600', dot: 'bg-gray-400' },
+  urgent: { label: 'Urgente', color: 'bg-red-100 text-red-700 border border-red-200', dot: 'bg-red-500' },
+  high: { label: 'Alta', color: 'bg-orange-100 text-orange-700 border border-orange-200', dot: 'bg-orange-500' },
+  medium: { label: 'Média', color: 'bg-blue-100 text-blue-700 border border-blue-200', dot: 'bg-blue-500' },
+  low: { label: 'Baixa', color: 'bg-slate-100 text-slate-600 border border-slate-200', dot: 'bg-slate-400' },
 }
 
 export default function BoardCard({ task, categories, onEdit, onDelete }) {
@@ -27,16 +27,16 @@ export default function BoardCard({ task, categories, onEdit, onDelete }) {
         e.currentTarget.classList.add('opacity-40')
       }}
       onDragEnd={(e) => e.currentTarget.classList.remove('opacity-40')}
-      className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+      className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm cursor-grab active:cursor-grabbing hover:-translate-y-0.5 hover:shadow-md transition-all"
     >
       <div className="flex items-start justify-between gap-2 mb-2">
-        <h4 className={`text-sm font-medium text-gray-800 leading-tight ${task.status === 'done' ? 'line-through text-gray-400' : ''}`}>
+        <h4 className={`text-sm font-medium text-slate-800 leading-tight ${task.status === 'done' ? 'line-through text-slate-400' : ''}`}>
           {task.title}
         </h4>
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => onEdit(task)}
-            className="text-gray-400 hover:text-indigo-600 transition-colors"
+            className="text-slate-400 hover:text-indigo-600 transition-colors"
             title="Editar"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -45,7 +45,7 @@ export default function BoardCard({ task, categories, onEdit, onDelete }) {
           </button>
           <button
             onClick={() => onDelete(task.id)}
-            className="text-gray-400 hover:text-red-600 transition-colors"
+            className="text-slate-400 hover:text-red-600 transition-colors"
             title="Excluir"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -56,7 +56,7 @@ export default function BoardCard({ task, categories, onEdit, onDelete }) {
       </div>
 
       {task.description && (
-        <p className="text-xs text-gray-500 mb-2 line-clamp-2">{task.description}</p>
+        <p className="text-xs text-slate-500 mb-2 line-clamp-2">{task.description}</p>
       )}
 
       <div className="flex flex-wrap items-center gap-1.5">
@@ -75,13 +75,13 @@ export default function BoardCard({ task, categories, onEdit, onDelete }) {
         )}
 
         {task.due_date && (
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isPastDue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'}`}>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isPastDue ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
             {formatDate(task.due_date)}
           </span>
         )}
 
         {task.shared_with_emails?.length > 0 && (
-          <span className="text-[10px] text-gray-400">
+          <span className="text-[10px] text-slate-400">
             +{task.shared_with_emails.length}
           </span>
         )}

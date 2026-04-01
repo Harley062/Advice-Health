@@ -3,10 +3,10 @@ import { useState } from 'react'
 import BoardCard from './BoardCard'
 
 const STATUS_COLORS = {
-  todo: 'border-gray-300 bg-gray-50',
-  in_progress: 'border-blue-300 bg-blue-50',
-  review: 'border-yellow-300 bg-yellow-50',
-  done: 'border-green-300 bg-green-50',
+  todo: 'border-slate-200 bg-slate-50/80',
+  in_progress: 'border-blue-200 bg-blue-50/70',
+  review: 'border-yellow-200 bg-amber-50/70',
+  done: 'border-green-200 bg-emerald-50/70',
 }
 
 const STATUS_DOT = {
@@ -41,19 +41,19 @@ export default function BoardColumn({ statusKey, label, tasks, categories, onDro
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col rounded-xl border-2 min-h-[300px] transition-colors ${colorClass} ${dragOver ? 'border-indigo-400 ring-2 ring-indigo-200' : ''}`}
+      className={`flex flex-col rounded-2xl border min-h-[300px] shadow-[0_6px_18px_rgba(15,23,42,0.04)] transition-colors ${colorClass} ${dragOver ? 'border-indigo-400 ring-2 ring-indigo-200' : ''}`}
     >
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-200/50">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-200/50">
         <span className={`w-2.5 h-2.5 rounded-full ${dotClass}`} />
-        <h3 className="text-sm font-semibold text-gray-700">{label}</h3>
-        <span className="ml-auto text-xs font-medium text-gray-400 bg-white px-2 py-0.5 rounded-full">
+        <h3 className="text-sm font-semibold text-slate-700">{label}</h3>
+        <span className="ml-auto text-xs font-medium text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">
           {tasks.length}
         </span>
       </div>
 
       <div className="flex-1 p-3 space-y-2 overflow-y-auto max-h-[calc(100vh-280px)]">
         {tasks.length === 0 && (
-          <p className="text-xs text-gray-400 text-center py-8">
+          <p className="text-xs text-slate-400 text-center py-8">
             Arraste tarefas para cá
           </p>
         )}

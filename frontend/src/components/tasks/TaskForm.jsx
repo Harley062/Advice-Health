@@ -90,13 +90,13 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-800">
+    <div className="fixed inset-0 bg-slate-950/45 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 rounded-2xl shadow-2xl w-full max-w-md border border-white/70">
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-gradient-to-r from-indigo-50/70 to-violet-50/70 rounded-t-2xl">
+          <h2 className="text-xl font-semibold text-slate-800">
             {isEdit ? 'Editar Tarefa' : 'Nova Tarefa'}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -111,7 +111,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="task-title">
+            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="task-title">
               T&iacute;tulo <span className="text-red-500">*</span>
             </label>
             <input
@@ -122,14 +122,14 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               onChange={handleChange}
               required
               data-testid="task-title-input"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="O que precisa ser feito?"
             />
             {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title[0]}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="task-desc">
+            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="task-desc">
               Descri&ccedil;&atilde;o
             </label>
             <textarea
@@ -138,14 +138,14 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               value={form.description}
               onChange={handleChange}
               rows={3}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
               placeholder="Detalhes opcionais..."
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="priority-select">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="priority-select">
                 Prioridade
               </label>
               <select
@@ -153,7 +153,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 name="priority"
                 value={form.priority}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {PRIORITY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -162,7 +162,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="status-select">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="status-select">
                 Status
               </label>
               <select
@@ -170,7 +170,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -181,7 +181,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="start-date">
                 Data de Início
               </label>
               <input
@@ -190,12 +190,12 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 type="date"
                 value={form.start_date}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="due-date">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="due-date">
                 Data de Entrega
               </label>
               <input
@@ -204,14 +204,14 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 type="date"
                 value={form.due_date}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="category-select">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="category-select">
                 Categoria
               </label>
               <select
@@ -219,7 +219,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">Nenhuma</option>
                 {categories.map((cat) => (
@@ -229,7 +229,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="recurrence-select">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="recurrence-select">
                 Recorrência
               </label>
               <select
@@ -237,7 +237,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 name="recurrence"
                 value={form.recurrence}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 {RECURRENCE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -248,7 +248,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
 
           {form.recurrence !== 'none' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="recurrence-end">
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="recurrence-end">
                 Fim da Recorrência
               </label>
               <input
@@ -257,7 +257,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
                 type="date"
                 value={form.recurrence_end_date}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           )}
@@ -266,7 +266,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Cancelar
             </button>
@@ -274,7 +274,7 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
               type="submit"
               disabled={loading}
               data-testid="task-submit-btn"
-              className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg font-medium transition-colors"
+              className="flex-1 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:brightness-110 disabled:brightness-95 text-white rounded-xl font-medium transition-all"
             >
               {loading ? 'Salvando...' : isEdit ? 'Atualizar' : 'Criar'}
             </button>
