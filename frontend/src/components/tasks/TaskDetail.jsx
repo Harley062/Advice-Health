@@ -64,6 +64,8 @@ function SubtasksTab({ task }) {
   const { data: subtasks = [], isLoading } = useQuery({
     queryKey: ['subtasks', task.id],
     queryFn: () => getSubtasks(task.id),
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 
   const addMutation = useMutation({
@@ -201,6 +203,8 @@ function CommentsTab({ task }) {
   const { data: comments = [], isLoading } = useQuery({
     queryKey: ['comments', task.id],
     queryFn: () => getComments(task.id),
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 
   const addMutation = useMutation({
@@ -297,12 +301,16 @@ function TimeTab({ task }) {
   const { data: entries = [], isLoading: entriesLoading } = useQuery({
     queryKey: ['timeEntries', task.id],
     queryFn: () => getTimeEntries(task.id),
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 
   const { data: activeTimer, isLoading: activeLoading } = useQuery({
     queryKey: ['activeTimer'],
     queryFn: getActiveTimer,
     refetchInterval: 10000,
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 
   // The active timer might be for a different task
@@ -351,9 +359,10 @@ function TimeTab({ task }) {
   })
 
   const formatEntryDuration = (entry) => {
-    if (!entry.started_at || !entry.stopped_at) return '--:--:--'
+    if (entry.duration_seconds) return formatDuration(entry.duration_seconds)
+    if (!entry.started_at || !entry.ended_at) return '--:--:--'
     const start = new Date(entry.started_at).getTime()
-    const end = new Date(entry.stopped_at).getTime()
+    const end = new Date(entry.ended_at).getTime()
     const secs = Math.floor((end - start) / 1000)
     return formatDuration(secs)
   }

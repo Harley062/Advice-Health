@@ -1,7 +1,7 @@
 import api from './api'
 
 export const getNotifications = () =>
-  api.get('/auth/notifications/').then((r) => r.data)
+  api.get('/auth/notifications/').then((r) => Array.isArray(r.data) ? r.data : r.data.results || [])
 
 export const markRead = (id) =>
   api.post(`/auth/notifications/${id}/read/`).then((r) => r.data)

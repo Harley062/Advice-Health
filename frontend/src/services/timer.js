@@ -1,7 +1,7 @@
 import api from './api'
 
 export const getTimeEntries = (taskId) =>
-  api.get('/tasks/time-entries/', { params: taskId ? { task: taskId } : {} }).then((r) => r.data)
+  api.get('/tasks/time-entries/', { params: taskId ? { task: taskId } : {} }).then((r) => Array.isArray(r.data) ? r.data : r.data.results || [])
 
 export const startTimer = (taskId, isPomodoro = false) =>
   api.post('/tasks/time-entries/', {

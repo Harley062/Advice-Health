@@ -307,6 +307,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class SubTaskViewSet(viewsets.ModelViewSet):
     serializer_class = SubTaskSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = None
 
     def get_queryset(self):
         return SubTask.objects.filter(task__owner=self.request.user, task_id=self.kwargs['task_pk'])
@@ -326,6 +327,7 @@ class SubTaskViewSet(viewsets.ModelViewSet):
 class CommentViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
     serializer_class = CommentSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = None
 
     def get_queryset(self):
         return Comment.objects.filter(task_id=self.kwargs['task_pk']).select_related('author')
@@ -350,6 +352,7 @@ class CommentViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Dest
 class ActivityLogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ActivityLogSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = None
 
     def get_queryset(self):
         return ActivityLog.objects.filter(user=self.request.user)[:100]
@@ -358,6 +361,7 @@ class ActivityLogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class TimeEntryViewSet(viewsets.ModelViewSet):
     serializer_class = TimeEntrySerializer
     permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = None
 
     def get_queryset(self):
         qs = TimeEntry.objects.filter(user=self.request.user)

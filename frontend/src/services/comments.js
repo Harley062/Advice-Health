@@ -1,7 +1,7 @@
 import api from './api'
 
 export const getComments = (taskId) =>
-  api.get(`/tasks/${taskId}/comments/`).then((r) => r.data)
+  api.get(`/tasks/${taskId}/comments/`).then((r) => Array.isArray(r.data) ? r.data : r.data.results || [])
 
 export const createComment = (taskId, content) =>
   api.post(`/tasks/${taskId}/comments/`, { content }).then((r) => r.data)

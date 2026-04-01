@@ -8,8 +8,6 @@ const NAV_LINKS = [
   { path: '/', label: 'Tarefas' },
   { path: '/insights', label: 'Insights' },
   { path: '/calendar', label: 'Calendário' },
-  { path: '/templates', label: 'Templates' },
-  { path: '/activity', label: 'Atividades' },
   { path: '/gamification', label: 'Conquistas' },
 ]
 
@@ -42,6 +40,8 @@ export default function Navbar() {
     queryKey: ['notifications'],
     queryFn: getNotifications,
     enabled: showNotifs,
+    staleTime: 0,
+    gcTime: 0,
   })
 
   const markReadMutation = useMutation({
@@ -76,7 +76,7 @@ export default function Navbar() {
   }
 
   const unreadCount = unreadData?.count || 0
-  const notifList = Array.isArray(notifications) ? notifications : notifications?.results || []
+  const notifList = Array.isArray(notifications) ? notifications : []
 
   const formatTime = (dateStr) => {
     const diff = Date.now() - new Date(dateStr).getTime()
@@ -124,7 +124,11 @@ export default function Navbar() {
           {/* Notifications */}
           <div className="relative" ref={notifRef}>
             <button
-              onClick={() => setShowNotifs(!showNotifs)}
+              onClick={() => {
+                const next = !showNotifs
+                if (next) queryClient.invalidateQueries({ queryKey: ['notifications'] })
+                setShowNotifs(next)
+              }}
               className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

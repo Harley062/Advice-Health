@@ -8,8 +8,6 @@ const Register = lazy(() => import('./pages/Register'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Insights = lazy(() => import('./pages/Insights'))
 const Calendar = lazy(() => import('./pages/Calendar'))
-const Activity = lazy(() => import('./pages/Activity'))
-const Templates = lazy(() => import('./pages/Templates'))
 const Gamification = lazy(() => import('./pages/Gamification'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -76,22 +74,6 @@ export default function App() {
               element={
                 <PrivateRoute>
                   <Calendar />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/activity"
-              element={
-                <PrivateRoute>
-                  <Activity />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/templates"
-              element={
-                <PrivateRoute>
-                  <Templates />
                 </PrivateRoute>
               }
             />

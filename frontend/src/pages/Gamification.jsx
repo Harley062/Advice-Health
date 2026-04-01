@@ -341,7 +341,7 @@ export default function Gamification() {
             <span className="text-xl">&#127918;</span>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Gamificacao</h1>
+            <h1 className="text-2xl font-bold text-gray-800">Gamificação</h1>
             <p className="text-sm text-gray-500">Acompanhe seu progresso e conquistas</p>
           </div>
         </div>
@@ -349,7 +349,7 @@ export default function Gamification() {
         {/* Error */}
         {profileError && (
           <div className="text-center py-16 text-red-500">
-            Falha ao carregar perfil de gamificacao.
+            Falha ao carregar perfil de gamificação.
           </div>
         )}
 

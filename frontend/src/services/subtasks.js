@@ -1,7 +1,7 @@
 import api from './api'
 
 export const getSubtasks = (taskId) =>
-  api.get(`/tasks/${taskId}/subtasks/`).then((r) => r.data)
+  api.get(`/tasks/${taskId}/subtasks/`).then((r) => Array.isArray(r.data) ? r.data : r.data.results || [])
 
 export const createSubtask = (taskId, data) =>
   api.post(`/tasks/${taskId}/subtasks/`, data).then((r) => r.data)
