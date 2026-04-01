@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from urllib.parse import urlparse, parse_qs, unquote
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -61,16 +62,39 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'NAME': os.environ.get('DB_NAME', 'todoapp'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url:
+    parsed = urlparse(database_url)
+    query = parse_qs(parsed.query)
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': parsed.hostname or os.environ.get('DB_HOST', 'localhost'),
+            'NAME': (parsed.path or '').lstrip('/') or os.environ.get('DB_NAME', 'todoapp'),
+            'USER': unquote(parsed.username) if parsed.username else os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': unquote(parsed.password) if parsed.password else os.environ.get('DB_PASSWORD', 'postgres'),
+            'PORT': str(parsed.port) if parsed.port else os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': query.get('sslmode', [os.environ.get('DB_SSLMODE', 'prefer')])[0],
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'NAME': os.environ.get('DB_NAME', 'todoapp'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': os.environ.get('DB_SSLMODE', 'prefer'),
+            },
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
