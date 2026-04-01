@@ -39,7 +39,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
       await deleteCategory(id)
       onUpdate()
     } catch {
-      // ignore
+      setError('Failed to delete category.')
     }
   }
 
@@ -55,7 +55,7 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
       setEditId(null)
       onUpdate()
     } catch {
-      // ignore
+      setError('Failed to update category.')
     }
   }
 

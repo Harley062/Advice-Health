@@ -65,3 +65,9 @@ class TestCategoryCRUD:
         url = reverse('category-list')
         response = second_auth_client.post(url, {'name': 'Work', 'color': '#0000FF'}, format='json')
         assert response.status_code == 201
+
+    def test_invalid_color_format(self, auth_client):
+        url = reverse('category-list')
+        response = auth_client.post(url, {'name': 'Bad Color', 'color': 'not-a-color'}, format='json')
+        assert response.status_code == 400
+        assert 'color' in response.data

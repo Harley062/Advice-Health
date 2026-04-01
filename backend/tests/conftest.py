@@ -5,6 +5,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .factories import UserFactory
 
 
+@pytest.fixture(autouse=True)
+def _disable_throttling(settings):
+    settings.REST_FRAMEWORK = {
+        **settings.REST_FRAMEWORK,
+        'DEFAULT_THROTTLE_CLASSES': [],
+        'DEFAULT_THROTTLE_RATES': {},
+    }
+
+
 @pytest.fixture
 def api_client():
     return APIClient()
