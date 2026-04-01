@@ -8,6 +8,7 @@ import TaskForm from '../components/tasks/TaskForm'
 import TaskSkeleton from '../components/tasks/TaskSkeleton'
 import CategoryManager from '../components/categories/CategoryManager'
 import BoardView from '../components/board/BoardView'
+import { BRAND } from '../constants/brand'
 
 const ORDERING_OPTIONS = [
   { value: '-created_at', label: 'Mais recentes' },
@@ -111,7 +112,7 @@ export default function Dashboard() {
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6 rounded-2xl border border-white/70 bg-white/75 backdrop-blur-sm p-4 shadow-[0_8px_28px_rgba(15,23,42,0.06)]">
               <div>
                 <h1 className="text-2xl font-bold text-slate-800">Minhas Tarefas</h1>
-                <p className="text-sm text-slate-500">Organize seu dia com foco e clareza ✨</p>
+                <p className="text-sm text-slate-500">{BRAND.slogan}</p>
               </div>
               <div className="flex gap-3">
                 <div className="flex bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">

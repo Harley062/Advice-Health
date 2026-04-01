@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { BRAND } from '../constants/brand'
 
 export default function Login() {
   const { login } = useAuth()
@@ -26,10 +27,17 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-2">To-Do App</h1>
-        <p className="text-center text-gray-500 mb-8">Entre na sua conta</p>
+    <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
+      <div className="bg-white/95 p-8 rounded-3xl shadow-2xl border border-white/80 w-full max-w-md backdrop-blur-sm">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white font-bold shadow-md">
+            {BRAND.shortName}
+          </span>
+          <h1 className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            {BRAND.name}
+          </h1>
+        </div>
+        <p className="text-center text-slate-500 mb-8">{BRAND.welcome} · Entre na sua conta</p>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
@@ -39,7 +47,7 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="email">
               E-mail
             </label>
             <input
@@ -48,12 +56,12 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="voce@exemplo.com"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="password">
               Senha
             </label>
             <input
@@ -62,20 +70,20 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold py-2.5 rounded-lg transition-colors"
+            className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:brightness-110 disabled:brightness-95 text-white font-semibold py-2.5 rounded-xl transition-all"
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
-        <p className="text-center text-gray-500 mt-6">
+        <p className="text-center text-slate-500 mt-6">
           Ainda n&atilde;o tem uma conta?{' '}
           <Link to="/register" className="text-indigo-600 hover:underline font-medium">
             Cadastre-se

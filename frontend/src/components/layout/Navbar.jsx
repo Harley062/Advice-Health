@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getNotifications, markRead, markAllRead, getUnreadCount } from '../../services/notifications'
+import { BRAND } from '../../constants/brand'
 
 const NAV_LINKS = [
   { path: '/', label: 'Tarefas' },
@@ -92,12 +93,18 @@ export default function Navbar() {
     <nav className="sticky top-0 z-40 border-b border-white/50 bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(15,23,42,0.05)]">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <span
-            className="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent cursor-pointer"
+          <button
+            type="button"
+            className="flex items-center gap-2"
             onClick={() => navigate('/')}
           >
-            Advice Health
-          </span>
+            <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white text-xs font-bold shadow-sm">
+              {BRAND.shortName}
+            </span>
+            <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent cursor-pointer">
+              {BRAND.name}
+            </span>
+          </button>
 
           {/* Desktop nav */}
           <div className="hidden lg:flex items-center gap-1">

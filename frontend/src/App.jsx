@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { BRAND } from './constants/brand'
 
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
@@ -13,8 +14,9 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen flex flex-col gap-3 items-center justify-center bg-transparent">
+      <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      <p className="text-sm text-slate-500 font-medium">Carregando {BRAND.name}...</p>
     </div>
   )
 }
