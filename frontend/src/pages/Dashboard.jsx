@@ -8,6 +8,7 @@ import TaskCard from '../components/tasks/TaskCard'
 import TaskForm from '../components/tasks/TaskForm'
 import TaskSkeleton from '../components/tasks/TaskSkeleton'
 import CategoryManager from '../components/categories/CategoryManager'
+import BoardView from '../components/board/BoardView'
 
 const ORDERING_OPTIONS = [
   { value: '-created_at', label: 'Mais recentes' },
@@ -16,20 +17,31 @@ const ORDERING_OPTIONS = [
   { value: '-due_date', label: 'Prazo (decrescente)' },
   { value: 'title', label: 'Título A-Z' },
   { value: '-title', label: 'Título Z-A' },
+  { value: 'priority', label: 'Prioridade' },
+]
+
+const PRIORITY_OPTIONS = [
+  { value: '', label: 'Todas' },
+  { value: 'urgent', label: 'Urgente' },
+  { value: 'high', label: 'Alta' },
+  { value: 'medium', label: 'Média' },
+  { value: 'low', label: 'Baixa' },
 ]
 
 export default function Dashboard() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
-  const [filters, setFilters] = useState({ completed: '', category: '', search: '', ordering: '-created_at' })
+  const [filters, setFilters] = useState({ completed: '', category: '', search: '', ordering: '-created_at', priority: '' })
   const [showTaskForm, setShowTaskForm] = useState(false)
   const [editingTask, setEditingTask] = useState(null)
   const [showCategoryManager, setShowCategoryManager] = useState(false)
   const [searchInput, setSearchInput] = useState('')
+  const [viewMode, setViewMode] = useState('list')
 
   const tasksQuery = useQuery({
     queryKey: ['tasks', filters, page],
     queryFn: () => getTasks(filters, page),
+    enabled: viewMode === 'list',
   })
 
   const categoriesQuery = useQuery({
@@ -47,12 +59,18 @@ export default function Dashboard() {
 
   const deleteMutation = useMutation({
     mutationFn: deleteTask,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
+    },
   })
 
   const toggleMutation = useMutation({
     mutationFn: toggleTask,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
+    },
   })
 
   const handleFilterChange = useCallback((key, value) => {
@@ -85,7 +103,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {jokeQuery.data && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-start gap-3">
             <span className="text-2xl">😄</span>
@@ -111,6 +129,26 @@ export default function Dashboard() {
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Minhas Tarefas</h1>
               <div className="flex gap-3">
+                <div className="flex bg-white border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`px-3 py-2 text-sm transition-colors ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                    title="Visualização em lista"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('board')}
+                    className={`px-3 py-2 text-sm transition-colors ${viewMode === 'board' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                    title="Visualização em quadro"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                    </svg>
+                  </button>
+                </div>
                 <button
                   onClick={() => setShowCategoryManager((v) => !v)}
                   className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -127,131 +165,157 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200">
-              <form onSubmit={handleSearch} className="flex-1 min-w-[200px]">
-                <label className="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Buscar tarefas..."
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-                  >
-                    Ir
-                  </button>
-                  {filters.search && (
-                    <button
-                      type="button"
-                      onClick={() => { setSearchInput(''); handleFilterChange('search', '') }}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            {viewMode === 'list' && (
+              <>
+                <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl border border-gray-200">
+                  <form onSubmit={handleSearch} className="flex-1 min-w-[200px]">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        placeholder="Buscar tarefas..."
+                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
+                      <button
+                        type="submit"
+                        className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                      >
+                        Ir
+                      </button>
+                      {filters.search && (
+                        <button
+                          type="button"
+                          onClick={() => { setSearchInput(''); handleFilterChange('search', '') }}
+                          className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Limpar
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                    <select
+                      value={filters.completed}
+                      onChange={(e) => handleFilterChange('completed', e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                      Limpar
-                    </button>
-                  )}
+                      <option value="">Todos</option>
+                      <option value="false">Ativas</option>
+                      <option value="true">Concluídas</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Prioridade</label>
+                    <select
+                      value={filters.priority}
+                      onChange={(e) => handleFilterChange('priority', e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      {PRIORITY_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
+                    <select
+                      value={filters.category}
+                      onChange={(e) => handleFilterChange('category', e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="">Todas as Categorias</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Ordenar por</label>
+                    <select
+                      value={filters.ordering}
+                      onChange={(e) => handleFilterChange('ordering', e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      {ORDERING_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </form>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                <select
-                  value={filters.completed}
-                  onChange={(e) => handleFilterChange('completed', e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="">Todos</option>
-                  <option value="false">Ativas</option>
-                  <option value="true">Concluídas</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
-                <select
-                  value={filters.category}
-                  onChange={(e) => handleFilterChange('category', e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="">Todas as Categorias</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+
+                {tasksQuery.isLoading && (
+                  <div className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <TaskSkeleton key={i} />
+                    ))}
+                  </div>
+                )}
+
+                {tasksQuery.isError && (
+                  <div className="text-center py-12 text-red-500">Falha ao carregar tarefas.</div>
+                )}
+
+                {!tasksQuery.isLoading && tasks.length === 0 && (
+                  <div className="text-center py-16 text-gray-400">
+                    <p className="text-5xl mb-4">📋</p>
+                    <p className="text-lg font-medium">
+                      {filters.search ? 'Nenhuma tarefa encontrada' : 'Nenhuma tarefa ainda'}
+                    </p>
+                    <p className="text-sm">
+                      {filters.search ? 'Tente uma busca diferente' : 'Crie sua primeira tarefa para começar!'}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {tasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      categories={categories}
+                      onEdit={handleEdit}
+                      onDelete={(id) => deleteMutation.mutate(id)}
+                      onToggle={(id) => toggleMutation.mutate(id)}
+                      onShare={() => {
+                        queryClient.invalidateQueries({ queryKey: ['tasks'] })
+                        queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
+                      }}
+                    />
                   ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Ordenar por</label>
-                <select
-                  value={filters.ordering}
-                  onChange={(e) => handleFilterChange('ordering', e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  {ORDERING_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+                </div>
 
-            {tasksQuery.isLoading && (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <TaskSkeleton key={i} />
-                ))}
-              </div>
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-3 mt-8">
+                    <button
+                      onClick={() => setPage((p) => p - 1)}
+                      disabled={page === 1}
+                      className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                    >
+                      Anterior
+                    </button>
+                    <span className="text-sm text-gray-600">
+                      Página {page} de {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={page === totalPages}
+                      className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                    >
+                      Próxima
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
-            {tasksQuery.isError && (
-              <div className="text-center py-12 text-red-500">Falha ao carregar tarefas.</div>
-            )}
-
-            {!tasksQuery.isLoading && tasks.length === 0 && (
-              <div className="text-center py-16 text-gray-400">
-                <p className="text-5xl mb-4">📋</p>
-                <p className="text-lg font-medium">
-                  {filters.search ? 'Nenhuma tarefa encontrada' : 'Nenhuma tarefa ainda'}
-                </p>
-                <p className="text-sm">
-                  {filters.search ? 'Tente uma busca diferente' : 'Crie sua primeira tarefa para começar!'}
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  categories={categories}
-                  onEdit={handleEdit}
-                  onDelete={(id) => deleteMutation.mutate(id)}
-                  onToggle={(id) => toggleMutation.mutate(id)}
-                  onShare={() => queryClient.invalidateQueries({ queryKey: ['tasks'] })}
-                />
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <button
-                  onClick={() => setPage((p) => p - 1)}
-                  disabled={page === 1}
-                  className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
-                >
-                  Anterior
-                </button>
-                <span className="text-sm text-gray-600">
-                  Página {page} de {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage((p) => p + 1)}
-                  disabled={page === totalPages}
-                  className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
-                >
-                  Próxima
-                </button>
-              </div>
+            {viewMode === 'board' && (
+              <BoardView
+                categories={categories}
+                onEdit={handleEdit}
+              />
             )}
           </main>
         </div>
@@ -264,6 +328,7 @@ export default function Dashboard() {
           onClose={handleFormClose}
           onSuccess={() => {
             queryClient.invalidateQueries({ queryKey: ['tasks'] })
+            queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
             handleFormClose()
           }}
         />

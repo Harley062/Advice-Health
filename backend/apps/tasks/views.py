@@ -13,8 +13,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
     filterset_class = TaskFilter
-    ordering_fields = ['created_at', 'due_date', 'title']
-    ordering = ['-created_at']
+    ordering_fields = ['created_at', 'due_date', 'title', 'priority', 'position']
+    ordering = ['position', '-created_at']
     search_fields = ['title', 'description']
 
     def get_queryset(self):
@@ -51,6 +51,27 @@ class TaskViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], url_path='toggle')
     def toggle_complete(self, request, pk=None):
         task = self.get_object()
-        task.completed = not task.completed
-        task.save(update_fields=['completed', 'updated_at'])
+        task.status = 'todo' if task.status == 'done' else 'done'
+        task.save(update_fields=['status', 'completed', 'updated_at'])
+        return Response(self.get_serializer(task).data)
+
+    @action(detail=True, methods=['patch'], url_path='move')
+    def move(self, request, pk=None):
+        task = self.get_object()
+        new_status = request.data.get('status')
+        new_position = request.data.get('position')
+
+        valid_statuses = [c[0] for c in Task.STATUS_CHOICES]
+        if new_status and new_status not in valid_statuses:
+            return Response(
+                {'detail': 'Status inválido.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if new_status:
+            task.status = new_status
+        if new_position is not None:
+            task.position = int(new_position)
+
+        task.save(update_fields=['status', 'completed', 'position', 'updated_at'])
         return Response(self.get_serializer(task).data)

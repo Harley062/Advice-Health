@@ -2,11 +2,27 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import ShareTaskModal from './ShareTaskModal'
 
+const PRIORITY_CONFIG = {
+  urgent: { label: 'Urgente', color: 'bg-red-100 text-red-700' },
+  high: { label: 'Alta', color: 'bg-orange-100 text-orange-700' },
+  medium: { label: 'Média', color: 'bg-blue-100 text-blue-700' },
+  low: { label: 'Baixa', color: 'bg-gray-100 text-gray-600' },
+}
+
+const STATUS_CONFIG = {
+  todo: { label: 'A Fazer', color: 'bg-gray-100 text-gray-700' },
+  in_progress: { label: 'Em Andamento', color: 'bg-blue-100 text-blue-700' },
+  review: { label: 'Em Revisão', color: 'bg-yellow-100 text-yellow-700' },
+  done: { label: 'Concluído', color: 'bg-green-100 text-green-700' },
+}
+
 export default function TaskCard({ task, categories, onEdit, onDelete, onToggle, onShare }) {
   const [showShare, setShowShare] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const category = categories.find((c) => c.id === task.category)
+  const priority = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium
+  const statusInfo = STATUS_CONFIG[task.status] || STATUS_CONFIG.todo
 
   const formatDate = (dateStr) => {
     if (!dateStr) return null
@@ -93,6 +109,13 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
             )}
 
             <div className="flex flex-wrap items-center gap-2 mt-3">
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusInfo.color}`}>
+                {statusInfo.label}
+              </span>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priority.color}`}>
+                {priority.label}
+              </span>
+
               {category && (
                 <span
                   className="text-xs px-2 py-0.5 rounded-full font-medium text-white"
@@ -143,6 +166,8 @@ TaskCard.propTypes = {
     completed: PropTypes.bool.isRequired,
     due_date: PropTypes.string,
     category: PropTypes.number,
+    priority: PropTypes.string,
+    status: PropTypes.string,
     shared_with_emails: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   categories: PropTypes.arrayOf(

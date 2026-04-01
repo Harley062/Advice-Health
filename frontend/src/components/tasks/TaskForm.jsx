@@ -2,6 +2,20 @@ import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
 import { createTask, updateTask } from '../../services/tasks'
 
+const PRIORITY_OPTIONS = [
+  { value: 'urgent', label: 'Urgente' },
+  { value: 'high', label: 'Alta' },
+  { value: 'medium', label: 'Média' },
+  { value: 'low', label: 'Baixa' },
+]
+
+const STATUS_OPTIONS = [
+  { value: 'todo', label: 'A Fazer' },
+  { value: 'in_progress', label: 'Em Andamento' },
+  { value: 'review', label: 'Em Revisão' },
+  { value: 'done', label: 'Concluído' },
+]
+
 export default function TaskForm({ task, categories, onClose, onSuccess }) {
   const isEdit = Boolean(task)
   const [form, setForm] = useState({
@@ -9,6 +23,8 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
     description: '',
     due_date: '',
     category: '',
+    priority: 'medium',
+    status: 'todo',
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -20,6 +36,8 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
         description: task.description || '',
         due_date: task.due_date || '',
         category: task.category || '',
+        priority: task.priority || 'medium',
+        status: task.status || 'todo',
       })
     }
   }, [task])
@@ -37,6 +55,8 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
       description: form.description,
       due_date: form.due_date || null,
       category: form.category || null,
+      priority: form.priority,
+      status: form.status,
     }
     try {
       if (isEdit) {
@@ -109,6 +129,42 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="priority-select">
+                Prioridade
+              </label>
+              <select
+                id="priority-select"
+                name="priority"
+                value={form.priority}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {PRIORITY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="status-select">
+                Status
+              </label>
+              <select
+                id="status-select"
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="due-date">
                 Data de Entrega
               </label>
@@ -171,6 +227,8 @@ TaskForm.propTypes = {
     description: PropTypes.string,
     due_date: PropTypes.string,
     category: PropTypes.number,
+    priority: PropTypes.string,
+    status: PropTypes.string,
   }),
   categories: PropTypes.arrayOf(
     PropTypes.shape({ id: PropTypes.number, name: PropTypes.string })

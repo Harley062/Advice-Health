@@ -9,15 +9,18 @@ User = get_user_model()
 class TaskSerializer(serializers.ModelSerializer):
     category_detail = CategorySerializer(source='category', read_only=True)
     shared_with_emails = serializers.SerializerMethodField()
+    priority_display = serializers.CharField(source='get_priority_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
         model = Task
         fields = (
             'id', 'title', 'description', 'completed', 'due_date',
-            'category', 'category_detail', 'owner', 'shared_with',
-            'shared_with_emails', 'created_at', 'updated_at',
+            'priority', 'priority_display', 'status', 'status_display',
+            'position', 'category', 'category_detail', 'owner',
+            'shared_with', 'shared_with_emails', 'created_at', 'updated_at',
         )
-        read_only_fields = ('id', 'owner', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'owner', 'completed', 'created_at', 'updated_at')
 
     def get_shared_with_emails(self, obj):
         return [user.email for user in obj.shared_with.all()]

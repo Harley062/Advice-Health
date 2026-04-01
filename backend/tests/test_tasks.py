@@ -16,7 +16,7 @@ def task(db, user):
 
 @pytest.fixture
 def completed_task(db, user):
-    return Task.objects.create(title='Done Task', completed=True, owner=user)
+    return Task.objects.create(title='Done Task', status='done', owner=user)
 
 
 @pytest.mark.django_db
@@ -30,6 +30,32 @@ class TestTaskCRUD:
         assert response.status_code == 201
         assert response.data['title'] == 'New Task'
         assert response.data['completed'] is False
+        assert response.data['status'] == 'todo'
+        assert response.data['priority'] == 'medium'
+
+    def test_create_task_with_priority_and_status(self, auth_client):
+        url = reverse('task-list')
+        response = auth_client.post(url, {
+            'title': 'Urgent Task',
+            'priority': 'urgent',
+            'status': 'in_progress',
+        }, format='json')
+        assert response.status_code == 201
+        assert response.data['priority'] == 'urgent'
+        assert response.data['priority_display'] == 'Urgente'
+        assert response.data['status'] == 'in_progress'
+        assert response.data['status_display'] == 'Em Andamento'
+        assert response.data['completed'] is False
+
+    def test_create_task_done_syncs_completed(self, auth_client):
+        url = reverse('task-list')
+        response = auth_client.post(url, {
+            'title': 'Done Task',
+            'status': 'done',
+        }, format='json')
+        assert response.status_code == 201
+        assert response.data['status'] == 'done'
+        assert response.data['completed'] is True
 
     def test_create_task_unauthenticated(self, api_client):
         url = reverse('task-list')
@@ -88,13 +114,31 @@ class TestTaskFiltering:
         assert response.data['results'][0]['title'] == 'Test Task'
 
     def test_filter_by_category(self, auth_client, user, category):
-        task_with_cat = Task.objects.create(title='Cat Task', owner=user, category=category)
+        Task.objects.create(title='Cat Task', owner=user, category=category)
         Task.objects.create(title='No Cat Task', owner=user)
         url = reverse('task-list')
         response = auth_client.get(url, {'category': category.id})
         assert response.status_code == 200
         assert response.data['count'] == 1
         assert response.data['results'][0]['title'] == 'Cat Task'
+
+    def test_filter_by_priority(self, auth_client, user):
+        Task.objects.create(title='Urgent', owner=user, priority='urgent')
+        Task.objects.create(title='Low', owner=user, priority='low')
+        url = reverse('task-list')
+        response = auth_client.get(url, {'priority': 'urgent'})
+        assert response.status_code == 200
+        assert response.data['count'] == 1
+        assert response.data['results'][0]['title'] == 'Urgent'
+
+    def test_filter_by_status(self, auth_client, user):
+        Task.objects.create(title='In Progress', owner=user, status='in_progress')
+        Task.objects.create(title='Todo', owner=user, status='todo')
+        url = reverse('task-list')
+        response = auth_client.get(url, {'status': 'in_progress'})
+        assert response.status_code == 200
+        assert response.data['count'] == 1
+        assert response.data['results'][0]['title'] == 'In Progress'
 
     def test_filter_due_date_range(self, auth_client, user):
         from datetime import date
@@ -172,13 +216,45 @@ class TestTaskSharing:
 class TestTaskToggle:
     def test_toggle_complete(self, auth_client, task):
         assert task.completed is False
+        assert task.status == 'todo'
         url = reverse('task-toggle-complete', args=[task.id])
         response = auth_client.post(url)
         assert response.status_code == 200
         assert response.data['completed'] is True
+        assert response.data['status'] == 'done'
 
     def test_toggle_back_to_incomplete(self, auth_client, completed_task):
+        assert completed_task.completed is True
         url = reverse('task-toggle-complete', args=[completed_task.id])
         response = auth_client.post(url)
         assert response.status_code == 200
         assert response.data['completed'] is False
+        assert response.data['status'] == 'todo'
+
+
+@pytest.mark.django_db
+class TestTaskMove:
+    def test_move_task_status(self, auth_client, task):
+        url = reverse('task-move', args=[task.id])
+        response = auth_client.patch(url, {'status': 'in_progress'}, format='json')
+        assert response.status_code == 200
+        assert response.data['status'] == 'in_progress'
+        assert response.data['completed'] is False
+
+    def test_move_task_to_done(self, auth_client, task):
+        url = reverse('task-move', args=[task.id])
+        response = auth_client.patch(url, {'status': 'done'}, format='json')
+        assert response.status_code == 200
+        assert response.data['status'] == 'done'
+        assert response.data['completed'] is True
+
+    def test_move_task_invalid_status(self, auth_client, task):
+        url = reverse('task-move', args=[task.id])
+        response = auth_client.patch(url, {'status': 'invalid'}, format='json')
+        assert response.status_code == 400
+
+    def test_move_task_position(self, auth_client, task):
+        url = reverse('task-move', args=[task.id])
+        response = auth_client.patch(url, {'status': 'todo', 'position': 5}, format='json')
+        assert response.status_code == 200
+        assert response.data['position'] == 5
