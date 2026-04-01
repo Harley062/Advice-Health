@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { createCategory, updateCategory, deleteCategory } from '../../services/categories'
 
@@ -149,4 +150,16 @@ export default function CategoryManager({ categories, onClose, onUpdate }) {
       </div>
     </div>
   )
+}
+
+CategoryManager.propTypes = {
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
 }

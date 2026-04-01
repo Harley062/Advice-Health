@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
 import { createTask, updateTask } from '../../services/tasks'
 
@@ -162,3 +163,20 @@ export default function TaskForm({ task, categories, onClose, onSuccess }) {
     </div>
   )
 }
+
+TaskForm.propTypes = {
+  task: PropTypes.shape({
+    id: PropTypes.number,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    due_date: PropTypes.string,
+    category: PropTypes.number,
+  }),
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({ id: PropTypes.number, name: PropTypes.string })
+  ).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+}
+
+TaskForm.defaultProps = { task: null }

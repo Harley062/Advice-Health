@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { useState } from 'react'
 import ShareTaskModal from './ShareTaskModal'
 
@@ -132,4 +133,23 @@ export default function TaskCard({ task, categories, onEdit, onDelete, onToggle,
       )}
     </>
   )
+}
+
+TaskCard.propTypes = {
+  task: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    completed: PropTypes.bool.isRequired,
+    due_date: PropTypes.string,
+    category: PropTypes.number,
+    shared_with_emails: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({ id: PropTypes.number, name: PropTypes.string, color: PropTypes.string })
+  ).isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  onShare: PropTypes.func.isRequired,
 }

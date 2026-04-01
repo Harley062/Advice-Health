@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { shareTask } from '../../services/tasks'
 
@@ -95,4 +96,11 @@ export default function ShareTaskModal({ taskId, taskTitle, onClose, onSuccess }
       </div>
     </div>
   )
+}
+
+ShareTaskModal.propTypes = {
+  taskId: PropTypes.number.isRequired,
+  taskTitle: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
 }

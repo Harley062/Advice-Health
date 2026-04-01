@@ -6,6 +6,7 @@ from .serializers import CategorySerializer
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = None
 
     def get_queryset(self):
         return Category.objects.filter(owner=self.request.user)
