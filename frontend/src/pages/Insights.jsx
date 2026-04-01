@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import PropTypes from 'prop-types'
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -22,6 +23,14 @@ const PRIORITY_CONFIG = {
   low: { label: 'Baixa', color: '#6B7280' },
 }
 
+const taskShape = PropTypes.shape({
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  title: PropTypes.string,
+  due_date: PropTypes.string,
+  priority: PropTypes.string,
+  status: PropTypes.string,
+})
+
 function KpiCard({ title, value, subtitle, icon, color }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-start gap-4">
@@ -35,6 +44,14 @@ function KpiCard({ title, value, subtitle, icon, color }) {
       </div>
     </div>
   )
+}
+
+KpiCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  subtitle: PropTypes.string,
+  icon: PropTypes.node.isRequired,
+  color: PropTypes.string.isRequired,
 }
 
 function CustomTooltip({ active, payload, label }) {
@@ -51,6 +68,18 @@ function CustomTooltip({ active, payload, label }) {
   )
 }
 
+CustomTooltip.propTypes = {
+  active: PropTypes.bool,
+  payload: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      color: PropTypes.string,
+    }),
+  ),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+}
+
 function PriorityLabel({ label, color, count, total }) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0
   return (
@@ -65,6 +94,13 @@ function PriorityLabel({ label, color, count, total }) {
       </div>
     </div>
   )
+}
+
+PriorityLabel.propTypes = {
+  label: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  count: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
 }
 
 function TaskRow({ task }) {
@@ -104,12 +140,20 @@ function TaskRow({ task }) {
   )
 }
 
+TaskRow.propTypes = {
+  task: taskShape.isRequired,
+}
+
 function EmptyChart({ message }) {
   return (
     <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
       {message}
     </div>
   )
+}
+
+EmptyChart.propTypes = {
+  message: PropTypes.string.isRequired,
 }
 
 export default function Insights() {

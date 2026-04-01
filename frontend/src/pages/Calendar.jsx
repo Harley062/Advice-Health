@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { useQuery } from '@tanstack/react-query'
 import { getAllTasks } from '../services/tasks'
 import Navbar from '../components/layout/Navbar'
@@ -37,6 +38,20 @@ const STATUS_COLORS = {
   review: 'bg-amber-50 text-amber-600',
   done: 'bg-emerald-50 text-emerald-600',
 }
+
+const categoryDetailShape = PropTypes.shape({
+  name: PropTypes.string,
+  color: PropTypes.string,
+})
+
+const taskShape = PropTypes.shape({
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  title: PropTypes.string,
+  priority: PropTypes.string,
+  status: PropTypes.string,
+  completed: PropTypes.bool,
+  category_detail: categoryDetailShape,
+})
 
 function getCalendarGrid(year, month) {
   const firstDay = new Date(year, month, 1)
@@ -94,6 +109,10 @@ function TaskPill({ task }) {
       {truncate(task.title)}
     </div>
   )
+}
+
+TaskPill.propTypes = {
+  task: taskShape.isRequired,
 }
 
 function DayPopover({ tasks, dateKey, onClose }) {
@@ -181,6 +200,12 @@ function DayPopover({ tasks, dateKey, onClose }) {
   )
 }
 
+DayPopover.propTypes = {
+  tasks: PropTypes.arrayOf(taskShape).isRequired,
+  dateKey: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+}
+
 function DayCell({ cell, tasks, isToday, selectedDay, onSelect }) {
   const dateKey = formatDateKey(cell.date)
   const isSelected = selectedDay === dateKey
@@ -228,8 +253,20 @@ function DayCell({ cell, tasks, isToday, selectedDay, onSelect }) {
   )
 }
 
+DayCell.propTypes = {
+  cell: PropTypes.shape({
+    date: PropTypes.instanceOf(Date).isRequired,
+    day: PropTypes.number.isRequired,
+    currentMonth: PropTypes.bool.isRequired,
+  }).isRequired,
+  tasks: PropTypes.arrayOf(taskShape).isRequired,
+  isToday: PropTypes.bool.isRequired,
+  selectedDay: PropTypes.string,
+  onSelect: PropTypes.func.isRequired,
+}
+
 export default function Calendar() {
-  const today = new Date()
+  const today = useMemo(() => new Date(), [])
   const [currentYear, setCurrentYear] = useState(today.getFullYear())
   const [currentMonth, setCurrentMonth] = useState(today.getMonth())
   const [selectedDay, setSelectedDay] = useState(null)

@@ -1,8 +1,31 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getGameProfile, getUserBadges, getAllBadges } from '../services/gamification'
 import { getCurrentGoal, createGoal } from '../services/goals'
 import Navbar from '../components/layout/Navbar'
+
+const profileShape = PropTypes.shape({
+  level: PropTypes.number,
+  xp_for_next_level: PropTypes.number,
+  xp_progress: PropTypes.number,
+  streak_current: PropTypes.number,
+  streak_best: PropTypes.number,
+  tasks_completed_total: PropTypes.number,
+  xp: PropTypes.number,
+})
+
+const goalShape = PropTypes.shape({
+  completed_count: PropTypes.number,
+  target_count: PropTypes.number,
+})
+
+const badgeShape = PropTypes.shape({
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  icon: PropTypes.string,
+  name: PropTypes.string,
+  description: PropTypes.string,
+})
 
 function getMonday() {
   const today = new Date()
@@ -90,6 +113,10 @@ function ProfileCard({ profile }) {
       </div>
     </div>
   )
+}
+
+ProfileCard.propTypes = {
+  profile: profileShape.isRequired,
 }
 
 function WeeklyGoalCard({ goal, onCreateGoal, isCreating }) {
@@ -214,6 +241,12 @@ function WeeklyGoalCard({ goal, onCreateGoal, isCreating }) {
   )
 }
 
+WeeklyGoalCard.propTypes = {
+  goal: goalShape,
+  onCreateGoal: PropTypes.func.isRequired,
+  isCreating: PropTypes.bool.isRequired,
+}
+
 function BadgeCard({ badge, earned, earnedAt }) {
   const formatDate = (dateStr) => {
     if (!dateStr) return ''
@@ -254,6 +287,12 @@ function BadgeCard({ badge, earned, earnedAt }) {
       )}
     </div>
   )
+}
+
+BadgeCard.propTypes = {
+  badge: badgeShape.isRequired,
+  earned: PropTypes.bool.isRequired,
+  earnedAt: PropTypes.string,
 }
 
 function ProfileSkeleton() {
