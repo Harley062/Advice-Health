@@ -284,7 +284,6 @@ export default function Calendar() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['calendar-tasks', currentYear, currentMonth],
     queryFn: () => getAllTasks(dateRange),
-    staleTime: 1000 * 60 * 2,
   })
 
   const allTasks = useMemo(() => {

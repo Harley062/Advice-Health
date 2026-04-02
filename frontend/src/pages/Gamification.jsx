@@ -320,25 +320,21 @@ export default function Gamification() {
   const { data: profile, isLoading: profileLoading, isError: profileError } = useQuery({
     queryKey: ['game-profile'],
     queryFn: getGameProfile,
-    staleTime: 1000 * 60,
   })
 
   const { data: userBadges, isLoading: userBadgesLoading } = useQuery({
     queryKey: ['user-badges'],
     queryFn: getUserBadges,
-    staleTime: 1000 * 60 * 5,
   })
 
   const { data: allBadges, isLoading: allBadgesLoading } = useQuery({
     queryKey: ['all-badges'],
     queryFn: getAllBadges,
-    staleTime: 1000 * 60 * 30,
   })
 
   const { data: goal, isLoading: goalLoading } = useQuery({
     queryKey: ['weekly-goal'],
     queryFn: getCurrentGoal,
-    staleTime: 1000 * 60,
     retry: false,
   })
 

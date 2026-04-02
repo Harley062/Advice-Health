@@ -47,23 +47,25 @@ export default function Dashboard() {
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
-    staleTime: 1000 * 60 * 30,
   })
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
+    queryClient.invalidateQueries({ queryKey: ['stats'] })
+    queryClient.invalidateQueries({ queryKey: ['game-profile'] })
+    queryClient.invalidateQueries({ queryKey: ['weekly-goal'] })
+    queryClient.invalidateQueries({ queryKey: ['calendar-tasks'] })
+  }
 
   const deleteMutation = useMutation({
     mutationFn: deleteTask,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
-      queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
-    },
+    onSuccess: invalidateAll,
   })
 
   const toggleMutation = useMutation({
     mutationFn: toggleTask,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
-      queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
-    },
+    onSuccess: invalidateAll,
   })
 
   const handleFilterChange = useCallback((key, value) => {
@@ -265,10 +267,7 @@ export default function Dashboard() {
                       onEdit={handleEdit}
                       onDelete={(id) => deleteMutation.mutate(id)}
                       onToggle={(id) => toggleMutation.mutate(id)}
-                      onShare={() => {
-                        queryClient.invalidateQueries({ queryKey: ['tasks'] })
-                        queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
-                      }}
+                      onShare={invalidateAll}
                     />
                   ))}
                 </div>
@@ -313,8 +312,7 @@ export default function Dashboard() {
           categories={categories}
           onClose={handleFormClose}
           onSuccess={() => {
-            queryClient.invalidateQueries({ queryKey: ['tasks'] })
-            queryClient.invalidateQueries({ queryKey: ['tasks-board'] })
+            invalidateAll()
             handleFormClose()
           }}
         />

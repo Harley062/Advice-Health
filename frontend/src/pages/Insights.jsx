@@ -160,7 +160,6 @@ export default function Insights() {
   const { data: stats, isLoading, isError } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats,
-    staleTime: 1000 * 60 * 2,
   })
 
   const { data: weeklyGoal } = useQuery({
